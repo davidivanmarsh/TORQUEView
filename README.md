@@ -99,6 +99,8 @@ Depending on which radiobutton you click at the bottom of the screen, "propertie
 
 The "Show nodes running job ID" checkbox is a filter that will show only the nodes running that specific job, and will highlight those job IDs in yellow. Unchecking it displays once again the entire list of nodes, but will continue to highlight the matching job IDs in yellow.
 
+![Nodes tab, showing detailed node info lists](https://raw.githubusercontent.com/davidivanmarsh/TORQUEView/master/screenShots/TORQUEView%20-%20Nodes%20list%20--%20showing%20detailed%20info%20lists.png)
+
 ##### node list context menu:
 When right-clicking on a node in either the heat map or node list, a context menu lets users:
 
@@ -121,6 +123,9 @@ By clicking the "Show Jobs by Queue" checkbox, jobs can be shown heirarchically 
 Clicking the "Show Nodes Running this Job" button will return the user to the nodes tab and will designate all nodes that are currently running the specified job.
 
 
+![Jobs tab](https://raw.githubusercontent.com/davidivanmarsh/TORQUEView/master/screenShots/TORQUEView%20-%20Jobs%20list.png)
+
+
 ##### job list context menu:
 When right-clicking on a job in the list, a context menu lets users:
 
@@ -136,12 +141,22 @@ The qmgr tab provides a GUI interface for the "qmgr" TORQUE command, letting you
 
 Finally, by clicking the "Use helps" checkbox, you can use a set of "submit-builder" controls that assist in creating a command line to be submitted. (Click "Insert" to copy the constructed line into the "Command" edit line, and then click the "Submit" button).
 
+
+![qmgr tab](https://raw.githubusercontent.com/davidivanmarsh/TORQUEView/master/screenShots/TORQUEView%20-%20qmgr%20tab.png)
+
 #### pbs_server tab:
 
 The pbs_server tab provides an interface to several pbs_server commands and shows their results. On the right is a panel that show the current contents of the "nodes" file, which can be edited if desired by clicking the "Edit" button.
+
+
+![pbs_server tab](https://raw.githubusercontent.com/davidivanmarsh/TORQUEView/master/screenShots/TORQUEView%20-%20pbs_server%20tab.png)
 
 ##### Log Viewer:
 
 The pbs_server's "Log Viewer" button brings up a log viewer that lets you do a "tail -f" command on a log file you select. To start performing the "tail -f", click Start; to stop, click the Stop button. Contents of the log viewer's window can be saved to a file with the Save As button.
 
 For searching, the Log Viewer lets you switch between a normal "Find" operation (on the contents of the log viewer window), or if you click the "Use grep" checkbox, it lets you indicate a grep pattern with options (this is done on the original file read in, not the contents of the window.)
+
+
+![Log Viewer](https://raw.githubusercontent.com/davidivanmarsh/TORQUEView/master/screenShots/TORQUEView%20-%20Log%20Viewer.png)
+
