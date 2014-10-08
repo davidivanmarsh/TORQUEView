@@ -5,25 +5,25 @@ TORQUEView is a GUI analysis and control tool for TORQUE. It lets you visually i
 
 ### Installation on Fedora 18
 
-- yum install -y qt-creator
+1. yum install -y qt-creator
 
-- Download/clone the source from github at:
+2. Download/clone the source from github at:
   `https://github.com/davidivanmarsh/TORQUEView`
 
-- Run qtcreator, and since the torque commands need to be run from root, make sure you run it as root. (This will open a gui). Be sure to add the qt version to the Desktop kit, Tools->Options->Kits. 
+3. Run qtcreator, and since the torque commands need to be run from root, make sure you run it as root. (This will open a gui). Be sure to add the qt version to the Desktop kit, Tools->Options->Kits. 
 
-- Open the TORQUEView project file (File->Open File or Project).  The project name is the file that ends in ".pro" (so for TORQUEView, the project name is "TORQUEView.pro")
+4. Open the TORQUEView project file (File->Open File or Project).  The project name is the file that ends in ".pro" (so for TORQUEView, the project name is "TORQUEView.pro")
 
-- To build TORQUEView, click Build->Build All, or just click on the build icon (hammer) in the lower-left corner of the screen.
+5. To build TORQUEView, click Build->Build All, or just click on the build icon (hammer) in the lower-left corner of the screen.
 
-- To run TORQUEView, click the green arrow at the bottom left corner of the screen (for Release), or the green arrow with the circle in it (for Debug).  This will also build it if it isn't built.
+6. To run TORQUEView, click the green arrow at the bottom left corner of the screen (for Release), or the green arrow with the circle in it (for Debug).  This will also build it if it isn't built.
 
-- Your binary will be created at <path_to_source>/../build-TORQUEView-Desktop-[Debug|Release]/TORQUEView.  Later on, you can run the app using "./TORQUEView" from this location if you don't want to keep using QtCreator all the time.
+7. Your binary will be created at <path_to_source>/../build-TORQUEView-Desktop-[Debug|Release]/TORQUEView.  Later on, you can run the app using "./TORQUEView" from this location if you don't want to keep using QtCreator all the time.
 
 
 ### Installation on Ubuntu 12.04
 
-- If you already have a built copy:
+1. If you already have a built copy:
 
     sudo apt-add-repository ppa:ubuntu-sdk-team/ppa
     
@@ -31,9 +31,9 @@ TORQUEView is a GUI analysis and control tool for TORQUE. It lets you visually i
     
     sudo apt-get install libqt5widgets5
 
-- Run TORQUEView
+2. Run TORQUEView
 
-- To build from source:
+3. To build from source:
 
     download Qt Creator onto Ubuntu (we are currently using Qt 5.2 and QtCreator version 3.0)  
     follow the same steps as above (starting with Step 2)
@@ -88,7 +88,7 @@ When you first run TORQUEView, you will notice a set of tab windows at the top o
 
 The "heat map" tab displays a table of all nodes on the server, showing the current state of each node as a color-coded icon. It can show either nodes without names (labels) or with names. It is most useful when displaying a large number of nodes and their states, letting the user see the state of the entire system at a glance.
 
-![Heat map tab, showing large number of nodes](https://lh3.googleusercontent.com/GqY9WDKNa-WF6TMJVoP7wES_GPBB9vH2Sy1SGUvKrTYdUAS3z-gTzbysH5aMtHtxI1tOAfZ_-q0=w1256-h492)
+![Heat map tab, showing large number of nodes](./screenShots/TorqueTool - Heat Map.png)
 
 
 #### nodes tab:
