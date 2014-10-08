@@ -35,8 +35,18 @@ TORQUEView is a GUI analysis and control tool for TORQUE. It lets you visually i
 
 3. To build from source:
 
-    download Qt Creator onto Ubuntu (we are currently using Qt 5.2 and QtCreator version 3.0)  
-    follow the same steps as above (starting with Step 2)
+    Download Qt Creator onto Ubuntu (we are currently using Qt 5.3 and QtCreator version 3.1).
+    
+    You can download the Qt framework from:
+    http://qt-project.org/downloads
+
+    Choose the "Download Qt Here" button, which takes you to:
+
+    http://www.qt.io/download/
+
+    Then choose the "Community" download button.
+    
+    Build TORQUEView by following the same steps as above in the "Installation on Fedora 18" (starting with Step 2)
 
 ### Accessing Remote Servers:
 - Make sure you have ssh key encrpytion set up for each of the servers you want to access.
