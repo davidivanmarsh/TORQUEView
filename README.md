@@ -84,11 +84,19 @@ TORQUEView's Snapshot feature allows the user to write out the server's current 
 
 The "Snapshot" button lets you take snapshots of the current TORQUE state and TORQUEView screen displays. You can take either a single snapshot, or a series of snapshots (where you indicate the time interval between snapshots).
 
+![Snapshot dialog](https://raw.githubusercontent.com/davidivanmarsh/TORQUEView/master/screenShots/TORQUEView%20-%20Snapshot%20dlg.png)
+
 The "Replay Snapshots" button lets you replay a collection of related snapshots, indicating the time interval between snapshot displays (this value is totally independent of the interval used when generating the snapshot series). Once the replay is started, the user can control the playback with the Pause, Resume, Next, Back, and Cancel buttons on the statusbar.
+
+![Replay Snapshot dialog](https://github.com/davidivanmarsh/TORQUEView/blob/master/screenShots/TORQUEView%20-%20Replay%20Snapshot%20dlg.png)
+
 
 #### Config button:
 
 The "Config" button on the main panel brings up the Configuration dialog box.  Inside that dialog, the "Remote" and "Local" radio-buttons let you specify the command set for either local or remote TORQUE servers.  If you choose "Remote", the Edit List button lets you create and edit a list of TORQUE servers to analyze. These are used to populate the "Remote host" combobox on the main panel.  The "TORQUEView commands" list shows all the commands currently being exercised when selecting TORQUEView options. Commands are automatically modified when switching between local and remote execution mode, or when selecting new remote servers.  The "Start/Stop MOM format" lets you specify whether it's a "multi-mom" configuration, or whether you want to user "service" commands to start and stop MOMs. The strings used to start or stop a MOM will differ depending on your choice here.
+
+![Config dialog](https://raw.githubusercontent.com/davidivanmarsh/TORQUEView/master/screenShots/TORQUEView%20-%20Config%20dlg.png)
+
 
 
 ### Tabs:
