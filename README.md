@@ -88,7 +88,7 @@ When you first run TORQUEView, you will notice a set of tab windows at the top o
 
 The "heat map" tab displays a table of all nodes on the server, showing the current state of each node as a color-coded icon. It can show either nodes without names (labels) or with names. It is most useful when displaying a large number of nodes and their states, letting the user see the state of the entire system at a glance.
 
-![Heat map tab, showing large number of nodes](./screenShots/TorqueTool - Heat Map.png)
+![Heat map tab, showing large number of nodes](https://raw.githubusercontent.com/davidivanmarsh/TORQUEView/master/screenShots/TORQUEView%20-%20Heat%20Map.png)
 
 
 #### nodes tab:
