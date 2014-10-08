@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>images/icon_blue.bmp</file>
+        <file>images/icon_gray.bmp</file>
+        <file>images/icon_green.bmp</file>
+        <file>images/icon_orange.bmp</file>
+        <file>images/icon_purple.bmp</file>
+        <file>images/icon_red.bmp</file>
+        <file>images/icon_white.bmp</file>
+        <file>images/icon_yellow.bmp</file>
+        <file>images/application.qss</file>
+        <file>images/coffee.qss</file>
+        <file>images/coolblue.qss</file>
+        <file>images/default.qss</file>
+        <file>images/pagefold.qss</file>
+        <file>images/prairie.qss</file>
+        <file>images/structured_data_32x32.ico</file>
+        <file>images/software_32x32.ico</file>
+        <file>images/script_32x32.ico</file>
+        <file>images/image_32x32.ico</file>
+        <file>images/vm-recipe-set.ico</file>
+        <file>images/textB_32x32.ico</file>
+        <file>images/document_32x32.ico</file>
+        <file>images/ConnectToIcon.png</file>
+        <file>images/categories.png</file>
+        <file>images/BaseVMs.png</file>
+        <file>images/database.png</file>
+        <file>images/general.png</file>
+        <file>images/myUpdate.png</file>
+        <file>images/network.png</file>
+        <file>images/nodes.png</file>
+        <file>images/preferences.png</file>
+        <file>images/test-suite-wizard.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QstatTab</class>
+ <widget class="QWidget" name="QstatTab">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1009</width>
+    <height>513</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_Title_NodeName">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Node name:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeWidget" name="treeWidget_Jobs">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="uniformRowHeights">
+          <bool>true</bool>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>130</number>
+         </attribute>
+         <attribute name="headerHighlightSections">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="headerShowSortIndicator" stdset="0">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Job ID</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Username</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Queue</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>NDS</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>TSK</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Req'd Memory</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Req'd Time</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>State</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Elapsed Time</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>BIG</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>FAST</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>PFS</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QCheckBox" name="checkBox_ShowJobsByQueue">
+           <property name="text">
+            <string>Show Jobs by Queue</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_ExpandAll">
+           <property name="text">
+            <string>Expand all</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_Queued">
+           <property name="text">
+            <string>Queued</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_Running">
+           <property name="text">
+            <string>Running</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_Completed">
+           <property name="text">
+            <string>Completed</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_Hold">
+           <property name="text">
+            <string>Hold</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_Suspended">
+           <property name="text">
+            <string>Suspended</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label_Title_JobInfo">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeWidget" name="treeWidget_JobInfo">
+         <column>
+          <property name="text">
+           <string>'qstat -f' property</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>value</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnShowNodesRunningThisJob">
+           <property name="text">
+            <string>Show Nodes Running this Job</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnExecHost">
+           <property name="text">
+            <string>List Running Jobs</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+  <action name="actionShow_Nodes_Job_Is_Running_On">
+   <property name="text">
+    <string>Show Nodes Running This Job</string>
+   </property>
+  </action>
+  <action name="actionClear_Nodes_Job_Is_Running_On">
+   <property name="text">
+    <string>Clear Nodes Job Is Running On</string>
+   </property>
+  </action>
+  <action name="actionDelete_job">
+   <property name="text">
+    <string>Delete job</string>
+   </property>
+  </action>
+  <action name="actionRun_job">
+   <property name="text">
+    <string>Run job</string>
+   </property>
+  </action>
+  <action name="actionPut_job_on_hold">
+   <property name="text">
+    <string>Put job on hold</string>
+   </property>
+  </action>
+  <action name="actionRerun_job">
+   <property name="text">
+    <string>Rerun job</string>
+   </property>
+  </action>
+  <action name="actionRelease_hold_on_job">
+   <property name="text">
+    <string>Release hold on job</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PbsNodesTab</class>
+ <widget class="QWidget" name="PbsNodesTab">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1074</width>
+    <height>706</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QSplitter" name="splitter_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QTreeWidget" name="treeWidget_Nodes">
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ExtendedSelection</enum>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectItems</enum>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <attribute name="headerHighlightSections">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="headerStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Node</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>State</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label_Title_NodeInfo">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeWidget" name="treeWidget_NodeInfo">
+          <property name="uniformRowHeights">
+           <bool>true</bool>
+          </property>
+          <column>
+           <property name="text">
+            <string>'pbsnodes' property</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>value</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_Title_MomCtl">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeWidget" name="treeWidget_MomCtl">
+          <column>
+           <property name="text">
+            <string>'momctl -d3' property</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>value</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QRadioButton" name="radioButton_ShowProperties">
+       <property name="text">
+        <string>Properties</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButton_ShowCores">
+       <property name="text">
+        <string>Cores</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_ShowNodesRunningJobID">
+       <property name="text">
+        <string>Show nodes running Job ID:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBox_JobID">
+       <property name="maximum">
+        <number>999999999</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_ResizeColumnsToContents">
+       <property name="text">
+        <string>Resize columns to contents</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_ShowNodeDetailsLists">
+       <property name="text">
+        <string>Show node lists</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+  <action name="actionShow_Nodes_Job_Is_Running_On">
+   <property name="text">
+    <string>Show Nodes Running This Job</string>
+   </property>
+  </action>
+  <action name="actionClear_Nodes_Job_Is_Running_On">
+   <property name="text">
+    <string>Clear Nodes Job Is Running On</string>
+   </property>
+  </action>
+  <action name="actionStart_MOM">
+   <property name="text">
+    <string>Start MOM</string>
+   </property>
+   <property name="toolTip">
+    <string>Start MOM</string>
+   </property>
+  </action>
+  <action name="actionStop_MOM">
+   <property name="text">
+    <string>Stop MOM</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop MOM</string>
+   </property>
+  </action>
+  <action name="actionMomctl_q">
+   <property name="text">
+    <string>momctl -q</string>
+   </property>
+  </action>
+  <action name="actionMark_node_as_OFFLINE">
+   <property name="text">
+    <string>Mark node as OFFLINE</string>
+   </property>
+  </action>
+  <action name="actionClear_OFFLINE_Node">
+   <property name="text">
+    <string>Clear OFFLINE From Node</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear OFFLINE From Node</string>
+   </property>
+  </action>
+  <action name="actionStart_MOM_2">
+   <property name="text">
+    <string>Start MOM</string>
+   </property>
+   <property name="toolTip">
+    <string>Start MOM</string>
+   </property>
+  </action>
+  <action name="actionStop_MOM_2">
+   <property name="text">
+    <string>Stop MOM</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop MOM</string>
+   </property>
+  </action>
+  <action name="actionMark_node_as_OFFLINE_2">
+   <property name="text">
+    <string>Mark node as OFFLINE</string>
+   </property>
+  </action>
+  <action name="actionClear_OFFLINE_Node_2">
+   <property name="text">
+    <string>Clear OFFLINE From Node</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear OFFLINE From Node</string>
+   </property>
+  </action>
+  <action name="actionAdd_Note">
+   <property name="text">
+    <string>Add Note...</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Note</string>
+   </property>
+  </action>
+  <action name="actionRemove_Note">
+   <property name="text">
+    <string>Remove Note</string>
+   </property>
+  </action>
+  <action name="actionAdd_Note_2">
+   <property name="text">
+    <string>Add Note...</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Note</string>
+   </property>
+  </action>
+  <action name="actionRemove_Note_2">
+   <property name="text">
+    <string>Remove Note</string>
+   </property>
+  </action>
+  <action name="actionLog_Viewer">
+   <property name="text">
+    <string>Log Viewer...</string>
+   </property>
+  </action>
+  <action name="actionLog_Viewer_2">
+   <property name="text">
+    <string>Log Viewer...</string>
+   </property>
+  </action>
+  <action name="actionNo_op">
+   <property name="text">
+    <string>No Op</string>
+   </property>
+  </action>
+  <action name="actionStart_MOM_Head_node">
+   <property name="text">
+    <string>Start MOM (Head node)</string>
+   </property>
+   <property name="toolTip">
+    <string>Start MOM (Head node)</string>
+   </property>
+  </action>
+  <action name="actionStart_MOM_Head_node_2">
+   <property name="text">
+    <string>Start MOM (Head node)</string>
+   </property>
+   <property name="toolTip">
+    <string>Start MOM (Head node)</string>
+   </property>
+  </action>
+  <action name="actionStop_MOM_Head_node">
+   <property name="text">
+    <string>Stop MOM (Head node)</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop MOM (Head node)</string>
+   </property>
+  </action>
+  <action name="actionStop_MOM_Head_node_2">
+   <property name="text">
+    <string>Stop MOM (Head node)</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop MOM (Head node)</string>
+   </property>
+  </action>
+  <action name="actionHighlight_all_occurances_of_JobID">
+   <property name="text">
+    <string>Highlight all occurances of JobID</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

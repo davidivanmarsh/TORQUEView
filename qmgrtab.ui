@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QmgrTab</class>
+ <widget class="QWidget" name="QmgrTab">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1006</width>
+    <height>408</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QPlainTextEdit" name="plainTextEdit_Qmgr"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QComboBox" name="comboBox_QueueServer">
+       <item>
+        <property name="text">
+         <string>set server</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>set queue</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>unset server</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>unset queue</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_ServerParams">
+       <item>
+        <property name="text">
+         <string extracomment="THIS IS A COMMENT FOR acl_hosts">acl_hosts</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>acl_host_enable</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>acl_logic_or</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>allow_node_submit</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>allow_proxy_user</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>auto_node_np</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>automatic_requeue_exit_code</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>checkpoint_defaults</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>clone_batch_delay</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>clone_batch_size</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>cray_enabled</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>default_queue</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>disable_server_id_check</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>display_job_server_suffix</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>interactive_jobs_can_roam</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>job_force_cancel_time</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>job_log_file_max_size</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>job_log_file_roll_depth</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>job_log_keep_days</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>job_nanny</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>job_stat_rate</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>job_start_timeout</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>job_sync_timeout</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>keep_completed</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>lock_file</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>lock_file_update_time</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>lock_file_check_time</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>log_events</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>log_file_max_size</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>log_file_roll_depth</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>log_keep_days</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>log_level</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>mail_body_fmt</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>mail_domain</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>mail_from</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>mail_subject_fmt</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>managers</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>max_job_array_size</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>max_slot_limit</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>max_threads</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>max_user_queuable</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>min_threads</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>moab_array_compatible</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>mom_job_sync</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>next_job_number</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>node_check_rate</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>node_pack</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>node_ping_rate</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>no_mail_force</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>np_default</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>operators</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>poll_jobs</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>query_other_jobs</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>record_job_info</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>record_job_script</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>resources_available</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>scheduling</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>submit_hosts</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>tcp_timeout</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>thread_idle_seconds</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_Queues">
+       <item>
+        <property name="text">
+         <string>batch</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>test</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>int</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>gpu</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>bf</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_QueueAttribs">
+       <item>
+        <property name="text">
+         <string>acl_groups</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>acl_group_enable</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>acl_group_sloppy</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>acl_hosts</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>acl_host_enable</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>acl_logic_or</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>acl_users</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>acl_user_enable</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>disallowed_types</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>enabled</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>features_required</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>keep_completed</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>kill_delay</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>max_queuable</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>max_running</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>max_user_queuable</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>max_user_run</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>priority</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>queue_type</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>required_login_property</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>resources_available</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>resources_default</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>resources_max</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>resources_min</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>route_destinations</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>started</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_Operator">
+       <item>
+        <property name="text">
+         <string>=</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>+=</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_Value"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnInsert">
+       <property name="text">
+        <string>Insert</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Command:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEdit_Qmgr"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSubmit">
+       <property name="text">
+        <string>Submit</string>
+       </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRefresh">
+       <property name="text">
+        <string>Refresh</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnClear">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_UseHelps">
+       <property name="text">
+        <string>Use Helps</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
