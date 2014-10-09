@@ -1,60 +1,48 @@
-## TORQUEView - Installation and Usage
+## TORQUEView Usage
 
-TORQUEView is a GUI analysis and control tool for TORQUE. It lets you visually inspect TORQUE node and job lists, and also control operation by allowing you to issue a variety of TORQUE client commands to those nodes or jobs. It was developed using the Qt application framework and needs to be built with QtCreator.
+TORQUEView is a GUI analysis tool for TORQUE. It is used to visually monitor the health of an entire TORQUE cluster at a glance and lets users quickly move to any troubled spots and drill in to diagnose problems.
 
+TORQUEView was developed using the Qt application framework and needs to be built with QtCreator.  Qt is an environment that lets you build and run TORQUEView on most Linux distros, Mac OS, and Windows.
 
-### Installation on Fedora 18
+## Installation
 
-1. yum install -y qt-creator
+### Qt Installation
 
-2. Download/clone the source from github at:
-  `https://github.com/davidivanmarsh/TORQUEView`
-
-3. Run qtcreator, and since the torque commands need to be run from root, make sure you run it as root. (This will open a gui). Be sure to add the qt version to the Desktop kit, Tools->Options->Kits. 
-
-4. Open the TORQUEView project file (File->Open File or Project).  The project name is the file that ends in ".pro" (so for TORQUEView, the project name is "TORQUEView.pro")
-
-5. To build TORQUEView, click Build->Build All, or just click on the build icon (hammer) in the lower-left corner of the screen.
-
-6. To run TORQUEView, click the green arrow at the bottom left corner of the screen (for Release), or the green arrow with the circle in it (for Debug).  This will also build it if it isn't built.
-
-7. Your binary will be created at <path_to_source>/../build-TORQUEView-Desktop-[Debug|Release]/TORQUEView.  Later on, you can run the app using "./TORQUEView" from this location if you don't want to keep using QtCreator all the time.
-
-
-### Installation on Ubuntu 12.04
-
-1. If you already have a built copy:
-
-    sudo apt-add-repository ppa:ubuntu-sdk-team/ppa
-    
-    sudo apt-get update
-    
-    sudo apt-get install libqt5widgets5
-
-2. Run TORQUEView
-
-3. To build from source:
-
-    Download Qt Creator onto Ubuntu (we are currently using Qt 5.3 and QtCreator version 3.1).
-    
-    You can download the Qt framework from:
+1.  Download the Qt framework from:
     http://qt-project.org/downloads
 
-    Choose the "Download Qt Here" button, which takes you to:
+2.  Choose the "Download Qt Here" button, which takes you to:
 
     http://www.qt.io/download/
 
-    Then choose the "Community" download button.
-    
-    Build TORQUEView by following the same steps as above in the "Installation on Fedora 18" (starting with Step 2)
+3.  Choose the "Community" download button.
+
+
+### TORQUEView Installation
+
+1. Download/clone the source from github at:
+  `https://github.com/davidivanmarsh/TORQUEView`
+
+### TORQUEView Build
+
+1. Run qtcreator, and since the TORQUE client commands need to be run from root, make sure you run it as root.
+
+2. Open the TORQUEView project file (File->Open File or Project).  The project name is the file that ends in ".pro" (so for TORQUEView, the project name is "TORQUEView.pro")
+
+3. To build TORQUEView, click Build->Build All, or just click on the build icon (hammer) in the lower-left corner of the screen.
+
+4. To run TORQUEView, click the green arrow at the bottom left corner of the screen (for Release), or the green arrow with the circle in it (for Debug).  This will also build it if it isn't built.
+
 
 ### Accessing Remote Servers:
 - Make sure you have ssh key encrpytion set up for each of the servers you want to access.
 
 
 
+
 ## TORQUEView - A Short User Guide
-David Marsh
+
+David I. Marsh
 Last updated:  10/08/2014
 
 The TORQUEView is designed as a TORQUE GUI analysis and diagnostics tool. It lets you visually inspect TORQUE node and job lists, and allows you to control TORQUE operation by issuing a variety of commands to those nodes.
