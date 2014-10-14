@@ -15,7 +15,7 @@ TORQUEView was developed using the Qt application framework and needs to be buil
 
     http://www.qt.io/download/
 
-3.  Choose the "Community" download button.
+3.  Choose the "Community" download button (NOTE: the Community version of Qt has no license fee, so choose this one.)
 
 
 ### TORQUEView Installation
@@ -88,11 +88,13 @@ The "Config" button on the main panel brings up the Configuration dialog box.  I
 
 
 ### Tabs:
-When you first run TORQUEView, you will notice a set of tab windows at the top of the TORQUEView window, which are titled: heat map, nodes, jobs, qmgr and pbs_server.
+The five tab windows in TORQUEView are titled: heat map, nodes, jobs, qmgr and pbs_server.
 
 #### heat map tab:
 
 The "heat map" tab displays a table of all nodes on the server, showing the current state of each node as a color-coded icon. It can show either nodes without names (labels) or with names. It is most useful when displaying a large number of nodes and their states, letting the user see the state of the entire system at a glance.
+
+The heat map's row height, column width, and number of rows displayed are  configurable. *TIP: use the up/down arrow keys on the keyboard to change these values, rather than clicking the mouse on the up/down arrows in the spin box.*
 
 ![Heat map tab, showing large number of nodes](https://raw.githubusercontent.com/davidivanmarsh/TORQUEView/master/screenShots/TORQUEView%20-%20Heat%20Map.png)
 

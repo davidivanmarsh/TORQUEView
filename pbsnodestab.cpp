@@ -1561,8 +1561,11 @@ void PbsNodesTab::writeDataToFile(QTextStream& out)
 			// first, add a special "TORQUEView" Node Name line to the stringlist
 			m_momCtl_Lines.append(QString("TORQUEView - Momctl Node Name:  %1\n").arg(node->m_nodeName));
 
-			issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort); // execute "momctl -d3" command call for that node -- parse output data
-			// NOTE: since m_bTakingSnapshot is true, will add it to m_momCtl_Lines
+            if (m_mainWindow->m_Snapshot_SaveIndividualNodeData)  // only do this if user wants to include momctl -d3 data in snapshot file
+            {
+                issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort); // execute "momctl -d3" command call for that node -- parse output data
+                // NOTE: since m_bTakingSnapshot is true, will add it to m_momCtl_Lines
+            }
 		}
 	}
 
@@ -1957,7 +1960,7 @@ void PbsNodesTab::getNodeInfo(NodeState state, QString sMultipleStates, QString&
 void PbsNodesTab::showNodesRunningJob( QString jobId/*, QString execHosts*/ )
 {
     m_mainWindow->m_pbsNodesTab->setJobID(jobId);  // set the jobID value in pbsNodesTab's spinBox_JobID control
-    m_mainWindow->m_pbsNodesTab->checkShowNodesRunningJobIDCheckbox();
+    m_mainWindow->m_pbsNodesTab->checkShowNodesRunningJobIDCheckbox( true );
 }
 
 /*******************************************************************************
@@ -1975,9 +1978,9 @@ void PbsNodesTab::setJobID( QString jobID )
 /*******************************************************************************
  *
 *******************************************************************************/
-void PbsNodesTab::checkShowNodesRunningJobIDCheckbox()
+void PbsNodesTab::checkShowNodesRunningJobIDCheckbox(bool bCheck)
 {
-    ui->checkBox_ShowNodesRunningJobID->setChecked(true);   // check the checkbox
+    ui->checkBox_ShowNodesRunningJobID->setChecked(bCheck);   // check/uncheck the checkbox
 }
 
 /*******************************************************************************

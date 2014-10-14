@@ -103,6 +103,8 @@ public:
 	bool isCurrentlyExecutingCmd();  // is TORQUEView currently executing some TORQUE client command (i.e, Run Job, Start MOM, etc.)
 	void setIsCurrentlyExecutingCmd(bool bFlag);  // is TORQUEView currently executing some TORQUE client command (i.e, Run Job, Start MOM, etc.)
 
+	bool	m_Snapshot_SaveIndividualNodeData;
+	bool	m_Snapshot_SaveIndividualJobData;
 	bool takingSnapshot();
 
 	void switchToPbsNodesTab();

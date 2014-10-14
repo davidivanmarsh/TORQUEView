@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>737</width>
-    <height>438</height>
+    <height>453</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -219,6 +219,26 @@
        <widget class="QPlainTextEdit" name="plainTextEdit_Comment"/>
       </item>
       <item>
+       <widget class="QCheckBox" name="checkBox_SaveIndividualNodeData">
+        <property name="text">
+         <string>Save data for each node (uses momctl -d3)*</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_SaveIndividualJobData">
+        <property name="text">
+         <string>Save data for each job (uses qstat -f)*</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="checkBox_RefreshLists">
         <property name="text">
          <string>Refresh all lists before taking snapshot</string>
@@ -238,6 +258,13 @@
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>*can take considerable time on clusters with many nodes or jobs</string>
      </property>
     </widget>
    </item>

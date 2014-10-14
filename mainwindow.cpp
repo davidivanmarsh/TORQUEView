@@ -153,6 +153,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Snapshot_NoEnd = true;
 	m_Snapshot_Filename = "";
 	m_Snapshot_Comments = "";
+	m_Snapshot_SaveIndividualNodeData = true;	// init to true
+	m_Snapshot_SaveIndividualJobData = true;	// init to true
 
 	setupStatusBar();
 
@@ -972,6 +974,12 @@ void MainWindow::on_comboBox_DataSource_activated ( int index )
 //	m_pbsNodesTab->on_btnClear_clicked();	// clear out any "show nodes running current job" stuff
 //	m_pbsNodesTab->clearNodesRunningJob();	// clear out any "show nodes running current job" stuff
 
+	ui->checkBox_AutoRefresh->setChecked(false);	// since data source changed, turn off Auto=Refresh
+
+	// also, turn off ShowNodesRunningJobId checkbox (otherwise the nodes list will
+	// usually be blank and the user won't know why)
+	m_pbsNodesTab->checkShowNodesRunningJobIDCheckbox(false);
+
 	QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
 	mysettings.setValue( "DataSource", index );  // do this BEFORE calling readSettings! -- it depends on it
 
@@ -1310,6 +1318,8 @@ void MainWindow::on_btnSnapshot_clicked()
 
 	m_Snapshot_Filename = dlg.SnapshotFilename();
 	m_Snapshot_Comments = dlg.Comment();
+	m_Snapshot_SaveIndividualNodeData = dlg.isSaveIndividualNodeDataChecked();
+	m_Snapshot_SaveIndividualJobData = dlg.isSaveIndividualJobDataChecked();
 
     if (m_Snapshot_ScheduleMultiple)
     {

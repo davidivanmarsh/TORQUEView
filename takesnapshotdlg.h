@@ -49,6 +49,8 @@ public:
 	int SnapshotHoursIterationsVal();
 	QString SnapshotFilename(); // if "ScheduleMultipleSnapshots" is checked, this is the baseline filename (we add date/time to it)
     QString Comment();
+	bool isSaveIndividualNodeDataChecked();
+	bool isSaveIndividualJobDataChecked();
 	bool isRefreshListsChecked();
 
 

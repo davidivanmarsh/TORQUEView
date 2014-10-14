@@ -1129,8 +1129,11 @@ void QstatTab::writeDataToFile(QTextStream& out)
 
 	if (dataSource == 0 || dataSource == 1)  // if data is coming from either Local host or Remote host
 	{
-		issueCmd_Qstat_f(); // issue a single "qstat -f" command -- will get all qstat -f data
-		// NOTE: since m_bTakingSnapshot is true, will add it to m_jobInfo_Lines
+		if (m_mainWindow->m_Snapshot_SaveIndividualJobData)  // only do this if user wants to include qstat -f data in snapshot file
+		{
+			issueCmd_Qstat_f(); // issue a single "qstat -f" command -- will get all qstat -f data
+			// NOTE: since m_bTakingSnapshot is true, will add it to m_jobInfo_Lines
+		}
 	}
 
 

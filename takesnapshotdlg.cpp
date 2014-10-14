@@ -127,6 +127,20 @@ QString TakeSnapshotDlg::Comment()
 {
     return ui->plainTextEdit_Comment->toPlainText();
 }
+bool TakeSnapshotDlg::isSaveIndividualNodeDataChecked()
+{
+	if (ui->checkBox_SaveIndividualNodeData->isChecked())
+		return true;
+	else
+		return false;
+}
+bool TakeSnapshotDlg::isSaveIndividualJobDataChecked()
+{
+	if (ui->checkBox_SaveIndividualJobData->isChecked())
+		return true;
+	else
+		return false;
+}
 bool TakeSnapshotDlg::isRefreshListsChecked()
 {
 	return ui->checkBox_RefreshLists->isChecked();

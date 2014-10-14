@@ -123,7 +123,7 @@ public:
 
 	void showNodesRunningJob( QString jobId/*, QString execHosts */);
 	void setJobID(QString jobID);  // set the jobID value in pbsNodesTab's spinBox_JobID control
-	void checkShowNodesRunningJobIDCheckbox();  // check the checkbox
+	void checkShowNodesRunningJobIDCheckbox(bool bCheck);  // check/uncheck the checkbox
 
 	void getNodeInfo(NodeState state, QString sMultipleStates, QString& sNodeState, bool bJobsPresent,
 		 bool bErrorStatus, QIcon& icon, QColor& backgroundcolor);

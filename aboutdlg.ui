@@ -67,13 +67,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Copyright 2014  David I. Marsh</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QLabel" name="label_QtVersion">
          <property name="text">
           <string>Built on: QT version xxxx</string>
