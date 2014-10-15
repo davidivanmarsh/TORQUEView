@@ -77,7 +77,14 @@ void PbsServerTab::enableControls()
     ui->btnStopServer->setEnabled(true);
     ui->btnRefresh->setEnabled(true);
     ui->btnViewServerLog->setEnabled(true);
-    ui->btnEditNodesFile->setEnabled(true);
+	if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
+	{
+		ui->btnEditNodesFile->setEnabled(true);
+	}
+	else
+	{
+		ui->btnEditNodesFile->setEnabled(false);
+	}
 }
 
 /*******************************************************************************
