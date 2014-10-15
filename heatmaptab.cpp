@@ -447,12 +447,21 @@ bool HeatMapTab::updateLists()
 *******************************************************************************/
 void HeatMapTab::enableControls()
 {
-    // data is "live" (i.e, from either a local or remote host instead of a snapshot file), so enable all context menu items
-    ui->actionStart_MOM->setEnabled(true);
-    ui->actionStart_MOM_Head_node->setEnabled(true);
-    ui->actionStop_MOM->setEnabled(true);
-    ui->actionStop_MOM_Head_node->setEnabled(true);
-    ui->actionMark_node_as_OFFLINE->setEnabled(true);
+	if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
+	{
+		ui->actionStart_MOM->setEnabled(true);
+		ui->actionStart_MOM_Head_node->setEnabled(true);
+		ui->actionStop_MOM->setEnabled(true);
+		ui->actionStop_MOM_Head_node->setEnabled(true);
+	}
+	else // else don't enable the start/stop MOM commands
+	{
+		ui->actionStart_MOM->setEnabled(false);
+		ui->actionStart_MOM_Head_node->setEnabled(false);
+		ui->actionStop_MOM->setEnabled(false);
+		ui->actionStop_MOM_Head_node->setEnabled(false);
+	}
+	ui->actionMark_node_as_OFFLINE->setEnabled(true);
     ui->actionClear_OFFLINE_Node->setEnabled(true);
     ui->actionAdd_Note->setEnabled(true);
     ui->actionRemove_Note->setEnabled(true);
@@ -536,7 +545,10 @@ void HeatMapTab::on_tableWidget_Nodes_itemSelectionChanged ()
         int dataSource = m_mainWindow->getComboBox_DataSource_CurrentIndex();
         if (dataSource == 0 || dataSource == 1)  // if data is coming from either Local host or Remote host
         {
-            issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort);
+			if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
+			{
+				issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort);
+			}
         }
         else  // else coming from snapshot file
         {

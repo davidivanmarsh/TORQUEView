@@ -1162,10 +1162,20 @@ void PbsNodesTab::initPbsnodesFromFile(QTextStream &in)
 *******************************************************************************/
 void PbsNodesTab::enableControls()
 {
-    ui->actionStart_MOM->setEnabled(true);
-    ui->actionStart_MOM_Head_node->setEnabled(true);
-    ui->actionStop_MOM->setEnabled(true);
-    ui->actionStop_MOM_Head_node->setEnabled(true);
+	if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
+	{
+		ui->actionStart_MOM->setEnabled(true);
+		ui->actionStart_MOM_Head_node->setEnabled(true);
+		ui->actionStop_MOM->setEnabled(true);
+		ui->actionStop_MOM_Head_node->setEnabled(true);
+	}
+	else // else don't enable the start/stop MOM commands
+	{
+		ui->actionStart_MOM->setEnabled(false);
+		ui->actionStart_MOM_Head_node->setEnabled(false);
+		ui->actionStop_MOM->setEnabled(false);
+		ui->actionStop_MOM_Head_node->setEnabled(false);
+	}
     ui->actionMark_node_as_OFFLINE->setEnabled(true);
     ui->actionClear_OFFLINE_Node->setEnabled(true);
     ui->actionAdd_Note->setEnabled(true);
@@ -1189,6 +1199,7 @@ void PbsNodesTab::disableControls()
     ui->actionRemove_Note->setEnabled(false);
     ui->actionLog_Viewer->setEnabled(false);
 }
+
 
 /*******************************************************************************
  *
@@ -1565,7 +1576,10 @@ void PbsNodesTab::writeDataToFile(QTextStream& out)
 
             if (m_mainWindow->m_Snapshot_SaveIndividualNodeData)  // only do this if user wants to include momctl -d3 data in snapshot file
             {
-                issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort); // execute "momctl -d3" command call for that node -- parse output data
+				if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
+				{
+					issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort); // execute "momctl -d3" command call for that node -- parse output data
+				}
                 // NOTE: since m_bTakingSnapshot is true, will add it to m_momCtl_Lines
             }
 		}
@@ -1668,7 +1682,10 @@ void PbsNodesTab::on_treeWidget_Nodes_itemSelectionChanged ()
 		int dataSource = m_mainWindow->getComboBox_DataSource_CurrentIndex();
 		if (dataSource == 0 || dataSource == 1)  // if data is coming from either Local host or Remote host
 		{
-			issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort);
+			if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
+			{
+				issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort);
+			}
 		}
 		else  // else coming from snapshot file
 		{

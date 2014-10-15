@@ -32,7 +32,8 @@ class ErrorMsgDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit ErrorMsgDlg(QString sDlgTitle, QString sMsgTitle, QString sMsg, bool bShowCheckbox=true, QWidget *parent = 0);
+	explicit ErrorMsgDlg(QString sDlgTitle, QString sMsgTitle, QString sMsg,
+			 bool bShowCheckbox=true, bool bShowOKButtonOnly=false, QWidget *parent = 0);
     ~ErrorMsgDlg();
 
     bool isDontShowThisAgainChecked();

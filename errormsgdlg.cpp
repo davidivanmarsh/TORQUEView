@@ -19,8 +19,11 @@
 
 #include "errormsgdlg.h"
 #include "ui_errormsgdlg.h"
+#include <QPushButton>
 
-ErrorMsgDlg::ErrorMsgDlg(QString sDlgTitle, QString sMsgTitle, QString sMsg, bool bShowCheckbox, QWidget *parent) :
+
+ErrorMsgDlg::ErrorMsgDlg(QString sDlgTitle, QString sMsgTitle, QString sMsg,
+		 bool bShowCheckbox, bool bShowOKButtonOnly, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ErrorMsgDlg)
 {
@@ -33,6 +36,11 @@ ErrorMsgDlg::ErrorMsgDlg(QString sDlgTitle, QString sMsgTitle, QString sMsg, boo
         ui->checkBox_DontShowThisAgain->hide();
     else
         ui->checkBox_DontShowThisAgain->show();
+
+	if (bShowOKButtonOnly)  // if showing only the OK button (not the "OK | Cancel" buttons)
+	{
+		ui->buttonBox->button( QDialogButtonBox::Cancel ) ->setVisible( false );
+	}
 }
 
 ErrorMsgDlg::~ErrorMsgDlg()

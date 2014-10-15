@@ -131,6 +131,7 @@ public:
     void enableControls();
     void disableControls();
 
+
 public slots:
 //	void on_btnClear_clicked();
 

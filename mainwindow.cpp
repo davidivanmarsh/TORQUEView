@@ -31,6 +31,7 @@
 #include "logviewerdlg.h"
 #include "replaysnapshotsdlg.h"
 #include "aboutdlg.h"
+#include "errormsgdlg.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -155,6 +156,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Snapshot_Comments = "";
 	m_Snapshot_SaveIndividualNodeData = true;	// init to true
 	m_Snapshot_SaveIndividualJobData = true;	// init to true
+
+	m_bRunningState = runningState_Unknown;  // init running state (later we'll find out if running as root or not)
 
 	setupStatusBar();
 
@@ -681,6 +684,33 @@ void MainWindow::showNodesRunningJob( QString jobId )
     m_pbsNodesTab->showNodesRunningJob( jobId ); // also pass in exec_host list
 }
 
+/*******************************************************************************
+ * This is the first point in TORQUETool initialization where we learn whether the
+ * user is running with root privileges or not.  If not, so give the message
+ * "Running without root-level privileges"
+*******************************************************************************/
+void MainWindow::getRunningState()
+{
+	// get the "nodes" filepath on the local host
+	QString nodesFilename = QString("%1%2")
+			.arg(m_Config_PbsServerHomeDir)
+			.arg("/server_priv/nodes");
+
+	// try to open "nodes" file for input -- if error, then user is not running as root
+	QFile file(nodesFilename);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		ErrorMsgDlg dlg("TORQUEView Message", "Running without root-level privileges",
+						"TORQUEView is being run without administrative (root)-level privileges.  Certain features will not be available, such as:\n\n-Issuing \"momctl-d3\" commands\n-Start Mom command\n-Stop MOM command\n-Accessing Nodes file\n",
+						false, true);
+		dlg.exec();
+		m_bRunningState = runningState_NormalUser;  // running as normal user
+	}
+	else
+	{
+		m_bRunningState = runningState_Admin;  // running as admin (root user)
+	}
+}
 
 /*******************************************************************************
  *
@@ -701,6 +731,8 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 
 		m_pbsNodesTab->issueCmd_GetServerHome();	// get the pbs_server's "serverhome" directory
 //		m_pbsNodesTab->issueCmd_GetMOMHome();		// get the pbs_mom's "serverhome" directory  -- NOT NEEDED YET
+		if (m_bRunningState == runningState_Unknown) // are we running as root user (with admin privileges)?
+			getRunningState(); // set the running state (either normal user or admin user)
 
 		if (m_Config_DataSource == 1) // if is "Remote"
 		{
@@ -763,8 +795,11 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 		}
 		if (bStatus)
 			bStatus = m_pbsServerTab->issueCmd_PbsServer();
-		if (bStatus)
-			bStatus = m_pbsServerTab->issueCmd_LoadNodesFile();
+		if (m_bRunningState == runningState_Admin)  // if running With admin privileges
+		{
+			if (bStatus)
+				bStatus = m_pbsServerTab->issueCmd_LoadNodesFile();
+		}
 
 
 //		ui->btnBrowse->setEnabled(false);
