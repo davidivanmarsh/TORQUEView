@@ -172,9 +172,6 @@ void QstatTab::initQstatFromFile( QTextStream &in )  // init the qstat tab from 
 {
     m_pbsJobs.clear();
 
-    PbsJob* job = NULL;
-
-
     bool bShowHeirarchy = false;
     if (ui->checkBox_ShowJobsByQueue->isChecked())
         bShowHeirarchy = true;
@@ -533,13 +530,10 @@ void QstatTab::qstat_R_processStdout() // parse the stdout data collected (above
 {
     m_pbsJobs.clear();
 
-    PbsJob* job = NULL;
-
-
     // determine if user wants to show tree heirarchy based on the "Queue" field
-    bool bShowHeirarchy = false;
-    if (ui->checkBox_ShowJobsByQueue->isChecked())
-        bShowHeirarchy = true;
+//    bool bShowHeirarchy = false;
+//    if (ui->checkBox_ShowJobsByQueue->isChecked())
+//        bShowHeirarchy = true;
 
 	bool bNodeNameSeen = false;
 
@@ -565,7 +559,6 @@ void QstatTab::qstat_R_processStdout() // parse the stdout data collected (above
 		else
 		{
 			QStringList fields = line.split(" ", QString::SkipEmptyParts);  // split on 'blank' boundaries
-			int count = fields.size();
 			QString jobID			= fields[0];
 			QString username		= fields[1];
 			QString queue			= fields[2];
@@ -1252,7 +1245,7 @@ void QstatTab::getExpandedState()   // remember which Job list items were expand
 *******************************************************************************/
 void QstatTab::restoreExpandedState() // expand any root-level items in Jobs list that previously were expanded
 {
-	int count = m_expandedMap.count();
+//	int count = m_expandedMap.count();
 	// iterate through the m_expandedItemMap and expand all items that previously were expanded
 	QMap<QString, bool>::iterator i;
 	for (i = m_expandedMap.begin(); i != m_expandedMap.end(); ++i)
@@ -1389,7 +1382,7 @@ void QstatTab::on_actionRun_job_triggered()
         issueCmd_RunJob( jobID );
     }
 
-    bool bStatus = issueCmd_Qstat_R();	// refresh qstat list
+    issueCmd_Qstat_R();	// refresh qstat list
 
 }
 
@@ -1407,8 +1400,7 @@ void QstatTab::on_actionDelete_job_triggered()
         issueCmd_DeleteJob( jobID );
     }
 
-    bool bStatus = issueCmd_Qstat_R();	// refresh qstat list
-
+    issueCmd_Qstat_R();	// refresh qstat list
 }
 
 /*******************************************************************************
@@ -1425,7 +1417,7 @@ void QstatTab::on_actionPut_job_on_hold_triggered()
         issueCmd_HoldJob( jobID );
     }
 
-    bool bStatus = issueCmd_Qstat_R();	// refresh qstat list
+    issueCmd_Qstat_R();	// refresh qstat list
 }
 
 /*******************************************************************************
@@ -1442,7 +1434,7 @@ void QstatTab::on_actionRelease_hold_on_job_triggered()
         issueCmd_ReleaseHoldOnJob( jobID );
     }
 
-    bool bStatus = issueCmd_Qstat_R();	// refresh qstat list
+    issueCmd_Qstat_R();	// refresh qstat list
 }
 
 /*******************************************************************************
@@ -1459,7 +1451,7 @@ void QstatTab::on_actionRerun_job_triggered()
         issueCmd_RerunJob( jobID );
     }
 
-    bool bStatus = issueCmd_Qstat_R();	// refresh qstat list
+    issueCmd_Qstat_R();	// refresh qstat list
 
 }
 

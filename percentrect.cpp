@@ -26,12 +26,13 @@
 
 PercentRect::PercentRect(float percent, int rowHeight, int percentRectWidth, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::PercentRect),
-    m_percentRectWidth (percentRectWidth),
-    m_percent (percent),
-    m_rowHeight(rowHeight)
+    ui(new Ui::PercentRect)
 {
     ui->setupUi(this);
+
+    m_percentRectWidth = percentRectWidth;
+    m_percent = percent;
+    m_rowHeight = rowHeight;
 }
 
 PercentRect::~PercentRect()
@@ -42,6 +43,8 @@ PercentRect::~PercentRect()
 
 void PercentRect::paintEvent(QPaintEvent *event)
 {
+	Q_UNUSED(event); // prevents warning
+
 	//create a QPainter and pass a pointer to the device.
 	//A paint device can be a QWidget, a QPixmap or a QImage
 	QPainter painter(this);

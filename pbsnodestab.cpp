@@ -417,6 +417,8 @@ void PbsNodesTab::pbsNodes_processStdout() // parse the stdout data collected (a
 *******************************************************************************/
 void PbsNodesTab::on_spinbox_JobID_valueChanged(int i)
 {
+    Q_UNUSED(i); // to prevent warning
+
     // if user changed spinbox value, uncheck "checkBox_ShowNodesRunningJobID"
     // REASON: we don't want to update Node list in the middle of user changing JobID spinbox value.
     // Only change it when he's through changing JobID value and THEN has checked the spinbox_JobID checkbox.

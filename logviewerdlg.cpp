@@ -96,6 +96,8 @@ LogViewerDlg::~LogViewerDlg()
 *******************************************************************************/
 void LogViewerDlg::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event); // prevents warning
+
     // user clicked the Close icon from the system menu
     stopTailLogfile();
 }

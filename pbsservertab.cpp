@@ -26,6 +26,7 @@
 #include <QDateTime>
 #include <QStatusBar>
 #include <QMessageBox>
+#include <QFile>
 
 
 

@@ -634,6 +634,7 @@ void ConfigDlg::done( int result )
 *******************************************************************************/
 void ConfigDlg::on_treeWidget_Commands_itemActivated(QTreeWidgetItem * item, int column)
 {
+	Q_UNUSED(column); // prevents warning
 	// (so user can copy the text if desired)
 //	QMessageBox::information( this, "Item properties", QString("%1\n\n%2").arg(item->text(0)).arg(item->text(1)),
 //							  QMessageBox::Ok, QMessageBox::Ok);
