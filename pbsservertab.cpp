@@ -105,7 +105,7 @@ void PbsServerTab::disableControls()
 *******************************************************************************/
 void PbsServerTab::showNoAdminRightsText()
 {
-	QString line = QString("(Not running with admin rights. \"Nodes\" file contents unavailable.");
+	QString line = QString("(Not running with admin rights -- \"nodes\" file contents unavailable");
 	ui->plainTextEdit_NodesFile->clear();
 	ui->plainTextEdit_NodesFile->appendPlainText( line );
 }

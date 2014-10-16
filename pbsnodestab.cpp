@@ -1690,7 +1690,7 @@ void PbsNodesTab::on_treeWidget_Nodes_itemSelectionChanged ()
 			{
 				// show msg: "(Because user does not have admin rights, "momctl -d3" values are unavailable.)"
 				QString sText1 = QString("(Not running with admin");
-				QString sText2 = QString("rights. Values unavailable.)");
+				QString sText2 = QString("rights -- values unavailable)");
 				ui->treeWidget_MomCtl->clear();	// clear out list
 				QTreeWidgetItem * itemLine1 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
 				QTreeWidgetItem * itemLine2 = new QTreeWidgetItem(ui->treeWidget_MomCtl);

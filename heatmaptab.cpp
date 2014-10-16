@@ -549,6 +549,17 @@ void HeatMapTab::on_tableWidget_Nodes_itemSelectionChanged ()
 			{
 				issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort);
 			}
+			else
+			{
+				// show msg: "(Because user does not have admin rights, "momctl -d3" values are unavailable.)"
+				QString sText1 = QString("(Not running with admin");
+				QString sText2 = QString("rights -- values unavailable)");
+				ui->treeWidget_MomCtl->clear();	// clear out list
+				QTreeWidgetItem * itemLine1 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
+				QTreeWidgetItem * itemLine2 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
+				itemLine1->setText(0, sText1);
+				itemLine2->setText(0, sText2);
+			}
         }
         else  // else coming from snapshot file
         {
