@@ -52,6 +52,7 @@ public:
 	void initPbsServerFromFile( QTextStream &in );  // init the pbs_server tab from a file
 	int  issueCmd_getLocalPbsServerPID();  // execute a command to get the local pbs_server PID
 	void initNodesContentsFromFile( QTextStream &in );  // init the "nodes" file contents from a file
+	void showNoAdminRightsText();
 
     void enableControls();
     void disableControls();

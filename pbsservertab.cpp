@@ -47,7 +47,6 @@ PbsServerTab::PbsServerTab(QWidget *parent) :
 
 	ui->treeWidget_PbsServer->header()->resizeSection(0, 205);	// name
 	ui->treeWidget_PbsServer->header()->resizeSection(1, 125);	// value
-
 }
 
 /*******************************************************************************
@@ -98,6 +97,17 @@ void PbsServerTab::disableControls()
     ui->btnRefresh->setEnabled(false);
     ui->btnViewServerLog->setEnabled(false);
     ui->btnEditNodesFile->setEnabled(false);
+}
+
+
+/*******************************************************************************
+ *
+*******************************************************************************/
+void PbsServerTab::showNoAdminRightsText()
+{
+	QString line = QString("(Not running with admin rights. \"Nodes\" file contents unavailable.");
+	ui->plainTextEdit_NodesFile->clear();
+	ui->plainTextEdit_NodesFile->appendPlainText( line );
 }
 
 /*******************************************************************************

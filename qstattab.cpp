@@ -822,7 +822,6 @@ bool QstatTab::issueCmd_Qstat_f( QString jobID )
 	// restore the original cursor
 	QApplication::restoreOverrideCursor();
 
-
 	if (!m_qstat_f_Stderr.isEmpty())
 	{
 		// this error happens usually when job is not longer found (is finished running)--
@@ -830,8 +829,9 @@ bool QstatTab::issueCmd_Qstat_f( QString jobID )
         if (m_showQStat_f_STDERROutput)
 		{
 //			QMessageBox::critical(0, QString("Error issuing '%1' command").arg(qstat_f_Command),
-//								  QString("Error issuing '%1' command.  Error message was: %2").arg(qstat_f_Command).arg(m_qstat_f_Stderr));
-            ErrorMsgDlg dlg("TORQUEView Error", "Error issuing 'qstat -f' command. Error message:", qstat_f_Command);
+//								  QString("Error issuing '%1' command.  Error message was: %2").arg(m_qstat_f_Stderr).arg(m_qstat_f_Stderr));
+			ErrorMsgDlg dlg("TORQUEView Error", "Error issuing 'qstat -f' command. Error message:",
+							QString("%1\n\nReason: Job \"%2\"  probably no longer exists.").arg(m_qstat_f_Stderr).arg(jobID));
             dlg.exec();
             if (dlg.isDontShowThisAgainChecked())  // see if the "Don't show this dialog again" checkbox was checked
                 m_showQStat_f_STDERROutput = false;

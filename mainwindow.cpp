@@ -800,6 +800,11 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 			if (bStatus)
 				bStatus = m_pbsServerTab->issueCmd_LoadNodesFile();
 		}
+		else
+		{
+			// "(Not running with admin rights. "Nodes" file contents unavailable.")
+			m_pbsServerTab->showNoAdminRightsText();
+		}
 
 
 //		ui->btnBrowse->setEnabled(false);
