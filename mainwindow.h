@@ -45,12 +45,12 @@ enum ScheduleSnapshotsType
 	scheduleSnapshotsType_Hours		= 2
 };
 
-enum RunningState
-{
-	runningState_Unknown	= 0,
-	runningState_Admin		= 1,
-	runningState_NormalUser = 2
-};
+//enum RunningState
+//{
+//	runningState_Unknown	= 0,
+//	runningState_Admin		= 1,
+//	runningState_NormalUser = 2
+//};
 
 
 class MainWindow : public QMainWindow
@@ -115,8 +115,8 @@ public:
 	bool	m_Snapshot_SaveIndividualJobData;
 	bool takingSnapshot();
 
-	void getRunningState();
-	RunningState  m_bRunningState;
+//	void getRunningState();
+//	RunningState  m_bRunningState;
 
 	void switchToPbsNodesTab();
 	void showNodesRunningJob( QString jobId );

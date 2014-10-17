@@ -76,14 +76,14 @@ void PbsServerTab::enableControls()
     ui->btnStopServer->setEnabled(true);
     ui->btnRefresh->setEnabled(true);
     ui->btnViewServerLog->setEnabled(true);
-	if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
-	{
+//	if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
+//	{
 		ui->btnEditNodesFile->setEnabled(true);
-	}
-	else
-	{
-		ui->btnEditNodesFile->setEnabled(false);
-	}
+//	}
+//	else
+//	{
+//		ui->btnEditNodesFile->setEnabled(false);
+//	}
 }
 
 /*******************************************************************************
@@ -105,7 +105,7 @@ void PbsServerTab::disableControls()
 *******************************************************************************/
 void PbsServerTab::showNoAdminRightsText()
 {
-	QString line = QString("(Not running with admin rights -- \"nodes\" file contents unavailable");
+	QString line = QString("(Not running with admin rights -- \"nodes\" file contents unavailable)");
 	ui->plainTextEdit_NodesFile->clear();
 	ui->plainTextEdit_NodesFile->appendPlainText( line );
 }
@@ -593,7 +593,7 @@ void PbsServerTab::on_btnEditNodesFile_clicked()
 /*******************************************************************************
  *
 *******************************************************************************/
-void PbsServerTab::loadLocalNodesFile( QString nodesFilename )
+bool PbsServerTab::loadLocalNodesFile( QString nodesFilename )
 {
 	// open "nodes" file for input
 	QFile file(nodesFilename);
@@ -601,12 +601,14 @@ void PbsServerTab::loadLocalNodesFile( QString nodesFilename )
 	{
 		QMessageBox::critical(0, "Error reading file", QString("Error, unable to read file '%1'.")
 			.arg(nodesFilename));
-		return;
+		return false;
 	}
 
 	QTextStream in(&file);
+	ui->plainTextEdit_NodesFile->clear();
 	ui->plainTextEdit_NodesFile->setPlainText( in.readAll() );
 	file.close();
+	return true;
 }
 
 
@@ -669,8 +671,7 @@ bool PbsServerTab::issueCmd_LoadNodesFile()  // execute a "load nodes file" comm
 		QString nodesFilename = QString("%1%2")
 				.arg(m_mainWindow->m_Config_PbsServerHomeDir)
 				.arg("/server_priv/nodes");
-		loadLocalNodesFile(nodesFilename);
-		return true;
+		return loadLocalNodesFile(nodesFilename);
 	}
 
 	// do an "scp" to copy the "nodes" file to the local "/tmp" directory
@@ -715,7 +716,7 @@ bool PbsServerTab::issueCmd_LoadNodesFile()  // execute a "load nodes file" comm
 	m_loadNodesFileProcess = NULL;
 
 
-	loadNodesFile_processStdout();
+	bool bStatus = loadNodesFile_processStdout();
 
 	// restore the original cursor
 	QApplication::restoreOverrideCursor();
@@ -741,7 +742,7 @@ bool PbsServerTab::issueCmd_LoadNodesFile()  // execute a "load nodes file" comm
 
 //	loadNodesFile( m_nodesFilename );    // load the "nodes" file from the "server_priv" directory
 
-    return true;
+    return bStatus;
 }
 
 /*******************************************************************************
@@ -767,7 +768,7 @@ void PbsServerTab::loadNodesFile_getStderr()
 /*******************************************************************************
  *
 *******************************************************************************/
-void PbsServerTab::loadNodesFile_processStdout() // parse the stdout data collected (above)
+bool PbsServerTab::loadNodesFile_processStdout() // parse the stdout data collected (above)
 {
     // open file for input
     QString filename("/tmp/nodes");
@@ -776,12 +777,14 @@ void PbsServerTab::loadNodesFile_processStdout() // parse the stdout data collec
     {
         QMessageBox::critical(0, "Error reading file", QString("Error, unable to read file '%1'.")
                               .arg(filename));
-        return;
+        return false;
     }
 
     QTextStream in(&file);
+    ui->plainTextEdit_NodesFile->clear();
     ui->plainTextEdit_NodesFile->setPlainText( in.readAll() );
     file.close();
+    return true;
 }
 
 

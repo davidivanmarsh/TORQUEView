@@ -157,7 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Snapshot_SaveIndividualNodeData = true;	// init to true
 	m_Snapshot_SaveIndividualJobData = true;	// init to true
 
-	m_bRunningState = runningState_Unknown;  // init running state (later we'll find out if running as root or not)
+//	m_bRunningState = runningState_Unknown;  // init running state (later we'll find out if running as root or not)
 
 	setupStatusBar();
 
@@ -689,28 +689,34 @@ void MainWindow::showNodesRunningJob( QString jobId )
  * user is running with root privileges or not.  If not, so give the message
  * "Running without root-level privileges"
 *******************************************************************************/
-void MainWindow::getRunningState()
-{
+//void MainWindow::getRunningState()
+//{
 	// get the "nodes" filepath on the local host
-	QString nodesFilename = QString("%1%2")
-			.arg(m_Config_PbsServerHomeDir)
-			.arg("/server_priv/nodes");
+//	QString nodesFilename = QString("%1%2")
+//			.arg(m_Config_PbsServerHomeDir)
+//			.arg("/server_priv/nodes");
 
-	// try to open "nodes" file for input -- if error, then user is not running as root
-	QFile file(nodesFilename);
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		ErrorMsgDlg dlg("TORQUEView Message", "Running without root-level privileges",
-						"TORQUEView is being run without administrative (root)-level privileges.  Certain features will not be available, such as:\n\n-Issuing \"momctl-d3\" commands\n-Start Mom command\n-Stop MOM command\n-Accessing Nodes file\n",
-						false, true);
-		dlg.exec();
-		m_bRunningState = runningState_NormalUser;  // running as normal user
-	}
-	else
-	{
-		m_bRunningState = runningState_Admin;  // running as admin (root user)
-	}
-}
+//	// try to open "nodes" file for input -- if error, then user is not running as root
+//	QFile file(nodesFilename);
+//	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+
+
+//	// this will try to open the nodes file, either locally on on a remote server (depending
+//	// on which data source is currently selected in the DataSource combobox)
+//	bool bStatus = m_pbsServerTab->issueCmd_LoadNodesFile();
+//	if (!bStatus)
+//	{
+//		ErrorMsgDlg dlg("TORQUEView Message", "Running without root-level privileges",
+//						"TORQUEView is being run without administrative (root)-level privileges.  Certain features will not be available, such as:\n\n-Issuing \"momctl-d3\" commands\n-Start Mom command\n-Stop MOM command\n-Accessing Nodes file\n",
+//						false, true);
+//		dlg.exec();
+//		m_bRunningState = runningState_NormalUser;  // running as normal user
+//	}
+//	else
+//	{
+//		m_bRunningState = runningState_Admin;  // running as admin (root user)
+//	}
+//}
 
 /*******************************************************************************
  *
@@ -731,8 +737,8 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 
 		m_pbsNodesTab->issueCmd_GetServerHome();	// get the pbs_server's "serverhome" directory
 //		m_pbsNodesTab->issueCmd_GetMOMHome();		// get the pbs_mom's "serverhome" directory  -- NOT NEEDED YET
-		if (m_bRunningState == runningState_Unknown) // are we running as root user (with admin privileges)?
-			getRunningState(); // set the running state (either normal user or admin user)
+//		if (m_bRunningState == runningState_Unknown) // are we running as root user (with admin privileges)?
+//			getRunningState(); // set the running state (either normal user or admin user)
 
 		if (m_Config_DataSource == 1) // if is "Remote"
 		{
@@ -795,16 +801,16 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 		}
 		if (bStatus)
 			bStatus = m_pbsServerTab->issueCmd_PbsServer();
-		if (m_bRunningState == runningState_Admin)  // if running With admin privileges
-		{
+//		if (m_bRunningState == runningState_Admin)  // if running With admin privileges
+//		{
 			if (bStatus)
 				bStatus = m_pbsServerTab->issueCmd_LoadNodesFile();
-		}
-		else
-		{
-			// "(Not running with admin rights. "Nodes" file contents unavailable.")
-			m_pbsServerTab->showNoAdminRightsText();
-		}
+//		}
+//		else
+//		{
+//			// "(Not running with admin rights. "Nodes" file contents unavailable.")
+//			m_pbsServerTab->showNoAdminRightsText();
+//		}
 
 
 //		ui->btnBrowse->setEnabled(false);

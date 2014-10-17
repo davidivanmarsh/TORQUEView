@@ -75,7 +75,7 @@ private slots:
 
 	void loadNodesFile_getStdout();
 	void loadNodesFile_getStderr();
-	void loadNodesFile_processStdout();
+	bool loadNodesFile_processStdout();
 
 	void copyNodesFile_getStdout();
 	void copyNodesFile_getStderr();
@@ -108,7 +108,7 @@ private:
 	QProcess* m_copyNodesFileProcess;
 	QProcess* m_saveNodesFileProcess;
 
-	void loadLocalNodesFile( QString nodesFilename );
+	bool loadLocalNodesFile( QString nodesFilename );
 	void copyLocalNodesFile( QString fromFilename, QString toFilename );
 	void saveLocalNodesFile( QString nodesFilename );
 
