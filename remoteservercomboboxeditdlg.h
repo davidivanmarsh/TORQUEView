@@ -36,6 +36,7 @@ public:
 	~RemoteServerComboboxEditDlg();
 
 	QStringList m_List;
+	int m_listIndex;
 
 private slots:
 	void on_btnAdd_clicked();

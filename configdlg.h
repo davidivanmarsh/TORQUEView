@@ -41,6 +41,8 @@ public:
 
     void init();
 
+	QString getRemoteServer();
+
 private slots:
 	void on_checkBox_UsingMultiMoms_stateChanged();
 
@@ -56,6 +58,8 @@ private:
     Ui::ConfigDlg *ui;
 
     MainWindow* m_mainWindow;
+	QString m_remoteServer;
+
 
     void CreateContextMenus();
 

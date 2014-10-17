@@ -29,6 +29,7 @@ RemoteServerComboboxEditDlg::RemoteServerComboboxEditDlg(	QStringList remoteServ
 	ui->setupUi(this);
 
 	ui->listWidget->addItems( m_remoteServerList );
+	m_listIndex = 0;  // init
 }
 
 RemoteServerComboboxEditDlg::~RemoteServerComboboxEditDlg()
@@ -54,6 +55,10 @@ void RemoteServerComboboxEditDlg::on_btnAdd_clicked()
 	QListWidgetItem *newItem = new QListWidgetItem;
 	newItem->setText(itemText);
 	ui->listWidget->addItem(newItem);
+
+	// select the item just inserted into the list (the last item)
+	int nRowCount = ui->listWidget->count();
+	ui->listWidget->setCurrentRow(nRowCount-1);
 }
 
 void RemoteServerComboboxEditDlg::on_btnRemove_clicked()
@@ -81,7 +86,8 @@ void RemoteServerComboboxEditDlg::done( int result )
 {
 	if ( result == QDialog::Accepted )
 	{
-		on_btnAdd_clicked();	// make sure current ui->lineEdit_ServerName contents has been added -- it's easy to forget to press the Add button!
+		// (not sure about doing this next line, commenting it out for now....)
+	//	on_btnAdd_clicked();	// make sure current ui->lineEdit_ServerName contents has been added -- it's easy to forget to press the Add button!
 
 		int count = ui->listWidget->count();
 		for(int i=0; i<count; i++)
@@ -89,6 +95,9 @@ void RemoteServerComboboxEditDlg::done( int result )
 			QString text = ui->listWidget->item(i)->text();
 			m_List.append(text);
 		}
+
+		// save off the index (will be -1 if invalid)
+		m_listIndex = ui->listWidget->currentRow();
 	}
 
 	QDialog::done( result );

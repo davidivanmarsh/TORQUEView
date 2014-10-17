@@ -28,6 +28,7 @@
 #include "takesnapshotdlg.h"
 #include "configdlg.h"
 #include "choosestylesheetdialog.h"
+#include "remoteservercomboboxeditdlg.h"
 #include "logviewerdlg.h"
 #include "replaysnapshotsdlg.h"
 #include "aboutdlg.h"
@@ -564,9 +565,20 @@ void MainWindow::readSettings()
 	m_Config_UseServiceToStartStopMOMs = settings.value( "UseServiceToStartStopMOMs", false ).toBool( );
 //	m_Config_ShowSTDERROutput = settings.value( "ShowSTDERROutput", true ).toBool( );
 
+	// (cleanup RemoteServer list -- sometimes has just a single item that is blank)
+	int nCount = m_Config_RemoteServerList.count();
+	for (int i=nCount-1; i>=0; i--)  // since we're removing items, iterate in reverse order
+	{
+		if (m_Config_RemoteServerList[i].isEmpty())
+			m_Config_RemoteServerList.removeAt(i);
+	}
+
 	// just for init purposes, make sure remoteServer is in list
-	if (! m_Config_RemoteServerList.contains(m_Config_RemoteServer))
-		m_Config_RemoteServerList.append(m_Config_RemoteServer);
+	if (!m_Config_RemoteServer.isEmpty())
+	{
+		if (! m_Config_RemoteServerList.contains(m_Config_RemoteServer))
+			m_Config_RemoteServerList.append(m_Config_RemoteServer);
+	}
 
 
 	getConfigCmds();
@@ -671,6 +683,109 @@ void MainWindow::getConfigCmds()
 /*******************************************************************************
  *
 *******************************************************************************/
+void MainWindow::setConfigCmds()
+{
+	if (m_Config_DataSource == 0) // if "Local host"
+	{
+		m_Config_Cmd_Pbsnodes      = SETTINGS_CMD_Pbsnodes;
+		m_Config_Cmd_Momctl_d3     = SETTINGS_CMD_Momctl_d3;
+		m_Config_Cmd_Qstat_R       = SETTINGS_CMD_Qstat_R;
+		m_Config_Cmd_Qstat_f       = SETTINGS_CMD_Qstat_f;
+		m_Config_Cmd_Qmgr_c        = SETTINGS_CMD_Qmgr_c;
+
+		m_Config_Cmd_StartMOM_HeadNode_Standard     = SETTINGS_CMD_StartMOM_HeadNode_Standard;
+		m_Config_Cmd_StartMOM_ComputeNode_Standard  = SETTINGS_CMD_StartMOM_ComputeNode_Standard;
+		m_Config_Cmd_StartMOM_HeadNode_Multimom     = SETTINGS_CMD_StartMOM_HeadNode_Multimom;
+		m_Config_Cmd_StartMOM_ComputeNode_Multimom  = SETTINGS_CMD_StartMOM_ComputeNode_Multimom;
+		m_Config_Cmd_StartMOM_HeadNode_Service      = SETTINGS_CMD_StartMOM_HeadNode_Service;
+		m_Config_Cmd_StartMOM_ComputeNode_Service   = SETTINGS_CMD_StartMOM_ComputeNode_Service;
+
+		m_Config_Cmd_StopMOM_HeadNode_Standard      = SETTINGS_CMD_StopMOM_HeadNode_Standard;
+		m_Config_Cmd_StopMOM_ComputeNode_Standard   = SETTINGS_CMD_StopMOM_ComputeNode_Standard;
+		m_Config_Cmd_StopMOM_HeadNode_Service       = SETTINGS_CMD_StopMOM_HeadNode_Service;
+		m_Config_Cmd_StopMOM_ComputeNode_Service    = SETTINGS_CMD_StopMOM_ComputeNode_Service;
+
+		m_Config_Cmd_MarkNodeAsOFFLINE     = SETTINGS_CMD_MarkNodeAsOFFLINE;
+		m_Config_Cmd_ClearOFFLINEFromNode  = SETTINGS_CMD_ClearOFFLINEFromNode;
+		m_Config_Cmd_AddNote       = SETTINGS_CMD_AddNote;
+		m_Config_Cmd_RemoveNote    = SETTINGS_CMD_RemoveNote;
+		m_Config_Cmd_Tail          = SETTINGS_CMD_Tail;
+		m_Config_Cmd_Grep          = SETTINGS_CMD_Grep;
+		m_Config_Cmd_Cat           = SETTINGS_CMD_Cat;
+		m_Config_Cmd_Scp_FromRemoteToLocal           = SETTINGS_CMD_Scp_FromRemoteToLocal;
+		m_Config_Cmd_Scp_FromLocalToRemote           = SETTINGS_CMD_Scp_FromLocalToRemote;
+		m_Config_Cmd_Cp            = SETTINGS_CMD_Cp;
+		m_Config_Cmd_GetServerHome = SETTINGS_CMD_GetServerHome;
+	//  m_Config_Cmd_GetMOMHome    = SETTINGS_CMD_GetMOMHome;
+
+		m_Config_Cmd_ModifyJob        = SETTINGS_CMD_ModifyJob;
+		m_Config_Cmd_DeleteJob        = SETTINGS_CMD_DeleteJob;
+		m_Config_Cmd_PutJobOnHold     = SETTINGS_CMD_PutJobOnHold;
+		m_Config_Cmd_MoveJob          = SETTINGS_CMD_MoveJob;
+		m_Config_Cmd_ReorderJob       = SETTINGS_CMD_ReorderJob;
+		m_Config_Cmd_RerunJob         = SETTINGS_CMD_RerunJob;
+		m_Config_Cmd_ReleaseHoldOnJob = SETTINGS_CMD_ReleaseHoldOnJob;
+		m_Config_Cmd_RunJob           = SETTINGS_CMD_RunJob;
+		m_Config_Cmd_SelectJob        = SETTINGS_CMD_SelectJob;
+		m_Config_Cmd_SendSignalToJob  = SETTINGS_CMD_SendSignalToJob;
+
+	}
+	else  // else Remote host (or snapshot file, but set Remote values anyway...)
+	{
+		m_Config_Cmd_Pbsnodes      = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Pbsnodes);
+		m_Config_Cmd_Momctl_d3     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Momctl_d3);
+		m_Config_Cmd_Qstat_R       = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R);
+		m_Config_Cmd_Qstat_f       = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f);
+		m_Config_Cmd_Qmgr_c        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qmgr_c);
+
+		m_Config_Cmd_StartMOM_HeadNode_Standard      = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StartMOM_HeadNode_Standard);
+		m_Config_Cmd_StartMOM_ComputeNode_Standard   = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StartMOM_ComputeNode_Standard);
+		m_Config_Cmd_StartMOM_HeadNode_Multimom      = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StartMOM_HeadNode_Multimom);
+		m_Config_Cmd_StartMOM_ComputeNode_Multimom   = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StartMOM_ComputeNode_Multimom);
+		m_Config_Cmd_StartMOM_HeadNode_Service       = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StartMOM_HeadNode_Service);
+		m_Config_Cmd_StartMOM_ComputeNode_Service    = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StartMOM_ComputeNode_Service);
+
+		m_Config_Cmd_StopMOM_HeadNode_Standard       = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StopMOM_HeadNode_Standard);
+		m_Config_Cmd_StopMOM_ComputeNode_Standard    = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StopMOM_ComputeNode_Standard);
+		m_Config_Cmd_StopMOM_HeadNode_Service        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StopMOM_HeadNode_Service);
+		m_Config_Cmd_StopMOM_ComputeNode_Service     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StopMOM_ComputeNode_Service);
+
+		m_Config_Cmd_MarkNodeAsOFFLINE    = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_MarkNodeAsOFFLINE);
+		m_Config_Cmd_ClearOFFLINEFromNode = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_ClearOFFLINEFromNode);
+		m_Config_Cmd_AddNote       = QString("ssh -o BatchMode=yes %1 \"%2\"").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_AddNote);
+		m_Config_Cmd_RemoveNote    = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_RemoveNote);
+		m_Config_Cmd_Tail          = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Tail);
+		m_Config_Cmd_Grep          = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Grep);
+		m_Config_Cmd_Cat           = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Cat);
+		m_Config_Cmd_Scp_FromRemoteToLocal  = QString("%1 %2").arg(SETTINGS_CMD_Scp_FromRemoteToLocal).arg(m_Config_RemoteServer);
+		m_Config_Cmd_Scp_FromLocalToRemote  = QString("%1").arg(SETTINGS_CMD_Scp_FromLocalToRemote);
+		m_Config_Cmd_Cp            = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Cp);
+		m_Config_Cmd_GetServerHome = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_GetServerHome);
+		//  m_Config_Cmd_GetMOMHome    = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_GetMOMHome);
+
+		m_Config_Cmd_ModifyJob        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_ModifyJob);
+		m_Config_Cmd_DeleteJob        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_DeleteJob);
+		m_Config_Cmd_PutJobOnHold     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_PutJobOnHold);
+		m_Config_Cmd_MoveJob          = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_MoveJob);
+		m_Config_Cmd_ReorderJob       = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_ReorderJob);
+		m_Config_Cmd_RerunJob         = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_RerunJob);
+		m_Config_Cmd_ReleaseHoldOnJob = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_ReleaseHoldOnJob);
+		m_Config_Cmd_SelectJob        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_SelectJob);
+		m_Config_Cmd_SendSignalToJob  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_SendSignalToJob);
+	}
+
+	// save off settings
+	QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+//	mysettings.setValue( "DataSource", m_Config_DataSource );
+	mysettings.setValue( "RemoteServer", m_Config_RemoteServer );
+	mysettings.setValue( "RemoteServerList", m_Config_RemoteServerList );
+//	mysettings.setValue( "UsingMultiMoms", m_Config_UsingMultiMoms );
+//	mysettings.setValue( "UseServiceToStartStopMOMs", m_Config_UseServiceToStartStopMOMs );
+}
+
+/*******************************************************************************
+ *
+*******************************************************************************/
 void MainWindow::switchToPbsNodesTab()
 {
     ui->tabWidget->setCurrentIndex( tabIndex_PbsNodesTab );	// switch to PbsNodes tab
@@ -763,6 +878,7 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 			ui->comboBox_DataSource->setCurrentIndex(0);	// 0 == Local
 			ui->label_RemoteServers->hide();
 			ui->comboBox_Remote_Servers->hide();
+			ui->btnEditServerList->hide();
 		}
 
 
@@ -824,6 +940,7 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 		ui->btnBrowse->show();
 		ui->label_RemoteServers->hide();
 		ui->comboBox_Remote_Servers->hide();
+		ui->btnEditServerList->hide();
 
 		// read in file and init all tabs from the one file
 
@@ -985,6 +1102,7 @@ void MainWindow::on_comboBox_DataSource_activated ( int index )
 	{
 		ui->label_RemoteServers->hide();
 		ui->comboBox_Remote_Servers->hide();
+		ui->btnEditServerList->hide();
 		ui->label_SnapshotFilename->hide();
 		ui->lineEdit_SnapshotFilename->hide();
 		ui->btnBrowse->hide();
@@ -996,6 +1114,7 @@ void MainWindow::on_comboBox_DataSource_activated ( int index )
 	{
 		ui->label_RemoteServers->show();
 		ui->comboBox_Remote_Servers->show();
+		ui->btnEditServerList->show();
 		ui->label_SnapshotFilename->hide();
 		ui->lineEdit_SnapshotFilename->hide();
 		ui->btnBrowse->hide();
@@ -1010,6 +1129,7 @@ void MainWindow::on_comboBox_DataSource_activated ( int index )
 	{
 		ui->label_RemoteServers->hide();
 		ui->comboBox_Remote_Servers->hide();
+		ui->btnEditServerList->hide();
 		ui->label_SnapshotFilename->show();
 		ui->lineEdit_SnapshotFilename->show();
 		ui->btnBrowse->show();
@@ -1155,6 +1275,45 @@ void MainWindow::doReplaySnapshot()
 /*******************************************************************************
  *
 *******************************************************************************/
+void MainWindow::on_btnEditServerList_clicked()
+{
+	on_actionEdit_Server_List_triggered();
+}
+
+/*******************************************************************************
+ *
+*******************************************************************************/
+void MainWindow::on_actionEdit_Server_List_triggered()
+{
+	// lets the user edit the RemoteServer list -- add, remove, etc.
+	RemoteServerComboboxEditDlg dlg( m_Config_RemoteServerList, this );
+	if (!dlg.exec())
+		return;
+
+	QStringList remoteServerList = dlg.m_List;
+	int listIndex = dlg.m_listIndex;
+
+	m_Config_RemoteServerList = remoteServerList;
+
+	// don't let signal go through (don't let on_comboBox_Remote_Servers_currentIndexChanged()
+	// be called, since it calls initAllTabs() before m_Config_RemoteServer has been set (below))
+	ui->comboBox_Remote_Servers->blockSignals(true);
+	// add combobox items to ui->comboBox_Remote_Server
+	ui->comboBox_Remote_Servers->clear();
+	ui->comboBox_Remote_Servers->addItems(remoteServerList);
+	if (listIndex != -1) // if it's valid
+		ui->comboBox_Remote_Servers->setCurrentIndex(listIndex);  // select the currently-selected item in the dlg's list
+	ui->comboBox_Remote_Servers->blockSignals(false);
+
+	m_Config_RemoteServer = ui->comboBox_Remote_Servers->currentText();
+
+	setConfigCmds();
+	initAllTabs(false); // don't include qmgr - Ken says it doesn't need to be updated on refresh
+}
+
+/*******************************************************************************
+ *
+*******************************************************************************/
 void MainWindow::on_btnRefresh_clicked()
 {
     on_actionRefresh_triggered();
@@ -1266,6 +1425,8 @@ void MainWindow::on_actionOpen_triggered()
 	}
 }
 
+
+
 /*******************************************************************************
  *
 *******************************************************************************/
@@ -1285,11 +1446,15 @@ void MainWindow::on_actionConfiguration_triggered()
 
     if (dlg.exec())
     {
+		setConfigCmds();
+		// save off settings (only those particular to the Config dlg - the other ones are saved in setConfigCmds())
+		QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+		mysettings.setValue( "DataSource", m_Config_DataSource );
+		mysettings.setValue( "UsingMultiMoms", m_Config_UsingMultiMoms );
+		mysettings.setValue( "UseServiceToStartStopMOMs", m_Config_UseServiceToStartStopMOMs );
 
         initAllTabs(false); // don't include qmgr - Ken says it doesn't need to be updated on refresh
-
     }
-
 }
 
 /*******************************************************************************

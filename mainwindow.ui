@@ -76,6 +76,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="btnEditServerList">
+        <property name="text">
+         <string>Edit...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLabel" name="label_SnapshotFilename">
         <property name="text">
          <string>Snapshot file:</string>
@@ -200,6 +207,8 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionEdit_Server_List"/>
+    <addaction name="separator"/>
     <addaction name="actionRefresh"/>
     <addaction name="actionConfiguration"/>
     <addaction name="actionChoose_Stylesheet"/>
@@ -257,6 +266,11 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt...</string>
+   </property>
+  </action>
+  <action name="actionEdit_Server_List">
+   <property name="text">
+    <string>Edit Server List...</string>
    </property>
   </action>
  </widget>

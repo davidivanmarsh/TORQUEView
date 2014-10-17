@@ -214,6 +214,8 @@ private slots:
     void on_btnNextSnapshotReplay_clicked();
     void on_btnBackSnapshotReplay_clicked();
 
+	void on_btnEditServerList_clicked();
+	void on_actionEdit_Server_List_triggered();
 	void on_btnRefresh_clicked();
 	void on_actionRefresh_triggered();
 	void on_btnBrowse_clicked();
@@ -287,9 +289,9 @@ private:
     void enteringSnapshotPauseState(QString msg);
     void exitingSnapshotPauseState(QString msg);
 
-
 	void readSettings();
 	void getConfigCmds();
+	void setConfigCmds();
 	void LoadStyleSheet(const QString &sheetName);
 	void CenterAppWindow();
 

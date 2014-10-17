@@ -63,6 +63,14 @@ ConfigDlg::~ConfigDlg()
 /*******************************************************************************
  *
 *******************************************************************************/
+QString ConfigDlg::getRemoteServer()
+{
+	return m_remoteServer;
+}
+
+/*******************************************************************************
+ *
+*******************************************************************************/
 void ConfigDlg::CreateContextMenus()
 {
 	ui->treeWidget_Commands->addAction(ui->actionShow_Properties);
@@ -510,121 +518,9 @@ void ConfigDlg::done( int result )
 		else
 			m_mainWindow->m_Config_DataSource = 0;
 
-//		m_mainWindow->m_Config_HeatMapRowCount = ui->spinBox_RowCount->text().toInt();
-//		m_mainWindow->m_Config_HeatMapRowHeight = ui->spinBox_RowHeight->text().toInt( );
-//		m_mainWindow->m_Config_HeatMapColumnWidth = ui->spinBox_ColumnWidth->text().toInt( );
-
-
-		QString remoteServer = ui->comboBox_Remote_Server->currentText();
-		m_mainWindow->m_Config_RemoteServer = remoteServer;
+		m_mainWindow->m_Config_RemoteServer = ui->comboBox_Remote_Server->currentText();
 		m_mainWindow->m_Config_UsingMultiMoms = ui->checkBox_UsingMultiMoms->isChecked();
 		m_mainWindow->m_Config_UseServiceToStartStopMOMs = ui->checkBox_UseServiceToStartStopMOMs->isChecked();
-//		m_mainWindow->m_Config_ShowSTDERROutput = ui->checkBox_ShowSTDERROutput->isChecked();
-
-        if (ui->rbtn_Remote->isChecked())
-        {
-            m_mainWindow->m_Config_Cmd_Pbsnodes      = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Pbsnodes);
-            m_mainWindow->m_Config_Cmd_Momctl_d3     = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Momctl_d3);
-            m_mainWindow->m_Config_Cmd_Qstat_R       = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_R);
-            m_mainWindow->m_Config_Cmd_Qstat_f       = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_f);
-            m_mainWindow->m_Config_Cmd_Qmgr_c        = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qmgr_c);
-
-            m_mainWindow->m_Config_Cmd_StartMOM_HeadNode_Standard      = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StartMOM_HeadNode_Standard);
-            m_mainWindow->m_Config_Cmd_StartMOM_ComputeNode_Standard   = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StartMOM_ComputeNode_Standard);
-            m_mainWindow->m_Config_Cmd_StartMOM_HeadNode_Multimom      = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StartMOM_HeadNode_Multimom);
-            m_mainWindow->m_Config_Cmd_StartMOM_ComputeNode_Multimom   = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StartMOM_ComputeNode_Multimom);
-            m_mainWindow->m_Config_Cmd_StartMOM_HeadNode_Service       = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StartMOM_HeadNode_Service);
-            m_mainWindow->m_Config_Cmd_StartMOM_ComputeNode_Service    = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StartMOM_ComputeNode_Service);
-
-            m_mainWindow->m_Config_Cmd_StopMOM_HeadNode_Standard       = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StopMOM_HeadNode_Standard);
-            m_mainWindow->m_Config_Cmd_StopMOM_ComputeNode_Standard    = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StopMOM_ComputeNode_Standard);
-            m_mainWindow->m_Config_Cmd_StopMOM_HeadNode_Service        = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StopMOM_HeadNode_Service);
-            m_mainWindow->m_Config_Cmd_StopMOM_ComputeNode_Service     = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_StopMOM_ComputeNode_Service);
-
-            m_mainWindow->m_Config_Cmd_MarkNodeAsOFFLINE    = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_MarkNodeAsOFFLINE);
-            m_mainWindow->m_Config_Cmd_ClearOFFLINEFromNode = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_ClearOFFLINEFromNode);
-            m_mainWindow->m_Config_Cmd_AddNote       = QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_AddNote);
-            m_mainWindow->m_Config_Cmd_RemoveNote    = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_RemoveNote);
-            m_mainWindow->m_Config_Cmd_Tail          = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Tail);
-            m_mainWindow->m_Config_Cmd_Grep          = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Grep);
-            m_mainWindow->m_Config_Cmd_Cat           = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Cat);
-            m_mainWindow->m_Config_Cmd_Scp_FromRemoteToLocal  = QString("%1 %2").arg(m_mainWindow->SETTINGS_CMD_Scp_FromRemoteToLocal).arg(m_mainWindow->m_Config_RemoteServer);
-            m_mainWindow->m_Config_Cmd_Scp_FromLocalToRemote  = QString("%1").arg(m_mainWindow->SETTINGS_CMD_Scp_FromLocalToRemote);
-            m_mainWindow->m_Config_Cmd_Cp            = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Cp);
-            m_mainWindow->m_Config_Cmd_GetServerHome = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_GetServerHome);
-        //  m_mainWindow->m_Config_Cmd_GetMOMHome    = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_GetMOMHome);
-
-            m_mainWindow->m_Config_Cmd_ModifyJob        = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_ModifyJob);
-            m_mainWindow->m_Config_Cmd_DeleteJob        = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_DeleteJob);
-            m_mainWindow->m_Config_Cmd_PutJobOnHold     = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_PutJobOnHold);
-            m_mainWindow->m_Config_Cmd_MoveJob          = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_MoveJob);
-            m_mainWindow->m_Config_Cmd_ReorderJob       = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_ReorderJob);
-            m_mainWindow->m_Config_Cmd_RerunJob         = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_RerunJob);
-            m_mainWindow->m_Config_Cmd_ReleaseHoldOnJob = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_ReleaseHoldOnJob);
-            m_mainWindow->m_Config_Cmd_SelectJob        = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_SelectJob);
-            m_mainWindow->m_Config_Cmd_SendSignalToJob  = QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_SendSignalToJob);
-
-        }
-        else
-        {
-            m_mainWindow->m_Config_Cmd_Pbsnodes      = m_mainWindow->SETTINGS_CMD_Pbsnodes;
-            m_mainWindow->m_Config_Cmd_Momctl_d3     = m_mainWindow->SETTINGS_CMD_Momctl_d3;
-            m_mainWindow->m_Config_Cmd_Qstat_R       = m_mainWindow->SETTINGS_CMD_Qstat_R;
-            m_mainWindow->m_Config_Cmd_Qstat_f       = m_mainWindow->SETTINGS_CMD_Qstat_f;
-            m_mainWindow->m_Config_Cmd_Qmgr_c        = m_mainWindow->SETTINGS_CMD_Qmgr_c;
-
-            m_mainWindow->m_Config_Cmd_StartMOM_HeadNode_Standard     = m_mainWindow->SETTINGS_CMD_StartMOM_HeadNode_Standard;
-            m_mainWindow->m_Config_Cmd_StartMOM_ComputeNode_Standard  = m_mainWindow->SETTINGS_CMD_StartMOM_ComputeNode_Standard;
-            m_mainWindow->m_Config_Cmd_StartMOM_HeadNode_Multimom     = m_mainWindow->SETTINGS_CMD_StartMOM_HeadNode_Multimom;
-            m_mainWindow->m_Config_Cmd_StartMOM_ComputeNode_Multimom  = m_mainWindow->SETTINGS_CMD_StartMOM_ComputeNode_Multimom;
-            m_mainWindow->m_Config_Cmd_StartMOM_HeadNode_Service      = m_mainWindow->SETTINGS_CMD_StartMOM_HeadNode_Service;
-            m_mainWindow->m_Config_Cmd_StartMOM_ComputeNode_Service   = m_mainWindow->SETTINGS_CMD_StartMOM_ComputeNode_Service;
-
-            m_mainWindow->m_Config_Cmd_StopMOM_HeadNode_Standard      = m_mainWindow->SETTINGS_CMD_StopMOM_HeadNode_Standard;
-            m_mainWindow->m_Config_Cmd_StopMOM_ComputeNode_Standard   = m_mainWindow->SETTINGS_CMD_StopMOM_ComputeNode_Standard;
-            m_mainWindow->m_Config_Cmd_StopMOM_HeadNode_Service       = m_mainWindow->SETTINGS_CMD_StopMOM_HeadNode_Service;
-            m_mainWindow->m_Config_Cmd_StopMOM_ComputeNode_Service    = m_mainWindow->SETTINGS_CMD_StopMOM_ComputeNode_Service;
-
-            m_mainWindow->m_Config_Cmd_MarkNodeAsOFFLINE     = m_mainWindow->SETTINGS_CMD_MarkNodeAsOFFLINE;
-            m_mainWindow->m_Config_Cmd_ClearOFFLINEFromNode  = m_mainWindow->SETTINGS_CMD_ClearOFFLINEFromNode;
-            m_mainWindow->m_Config_Cmd_AddNote       = m_mainWindow->SETTINGS_CMD_AddNote;
-            m_mainWindow->m_Config_Cmd_RemoveNote    = m_mainWindow->SETTINGS_CMD_RemoveNote;
-            m_mainWindow->m_Config_Cmd_Tail          = m_mainWindow->SETTINGS_CMD_Tail;
-            m_mainWindow->m_Config_Cmd_Grep          = m_mainWindow->SETTINGS_CMD_Grep;
-            m_mainWindow->m_Config_Cmd_Cat           = m_mainWindow->SETTINGS_CMD_Cat;
-            m_mainWindow->m_Config_Cmd_Scp_FromRemoteToLocal           = m_mainWindow->SETTINGS_CMD_Scp_FromRemoteToLocal;
-            m_mainWindow->m_Config_Cmd_Scp_FromLocalToRemote           = m_mainWindow->SETTINGS_CMD_Scp_FromLocalToRemote;
-            m_mainWindow->m_Config_Cmd_Cp            = m_mainWindow->SETTINGS_CMD_Cp;
-            m_mainWindow->m_Config_Cmd_GetServerHome = m_mainWindow->SETTINGS_CMD_GetServerHome;
-        //  m_mainWindow->m_Config_Cmd_GetMOMHome    = m_mainWindow->SETTINGS_CMD_GetMOMHome;
-
-            m_mainWindow->m_Config_Cmd_ModifyJob        = m_mainWindow->SETTINGS_CMD_ModifyJob;
-            m_mainWindow->m_Config_Cmd_DeleteJob        = m_mainWindow->SETTINGS_CMD_DeleteJob;
-            m_mainWindow->m_Config_Cmd_PutJobOnHold     = m_mainWindow->SETTINGS_CMD_PutJobOnHold;
-            m_mainWindow->m_Config_Cmd_MoveJob          = m_mainWindow->SETTINGS_CMD_MoveJob;
-            m_mainWindow->m_Config_Cmd_ReorderJob       = m_mainWindow->SETTINGS_CMD_ReorderJob;
-            m_mainWindow->m_Config_Cmd_RerunJob         = m_mainWindow->SETTINGS_CMD_RerunJob;
-            m_mainWindow->m_Config_Cmd_ReleaseHoldOnJob = m_mainWindow->SETTINGS_CMD_ReleaseHoldOnJob;
-            m_mainWindow->m_Config_Cmd_RunJob           = m_mainWindow->SETTINGS_CMD_RunJob;
-            m_mainWindow->m_Config_Cmd_SelectJob        = m_mainWindow->SETTINGS_CMD_SelectJob;
-            m_mainWindow->m_Config_Cmd_SendSignalToJob  = m_mainWindow->SETTINGS_CMD_SendSignalToJob;
-
-        }
-
-
-		// save off settings
-		QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
-		mysettings.setValue( "DataSource", m_mainWindow->m_Config_DataSource );
-		mysettings.setValue( "RemoteServer", m_mainWindow->m_Config_RemoteServer );
-		mysettings.setValue( "RemoteServerList", m_mainWindow->m_Config_RemoteServerList );
-		mysettings.setValue( "UsingMultiMoms", m_mainWindow->m_Config_UsingMultiMoms );
-		mysettings.setValue( "UseServiceToStartStopMOMs", m_mainWindow->m_Config_UseServiceToStartStopMOMs );
-//		mysettings.setValue( "ShowSTDERROutput", m_mainWindow->m_Config_ShowSTDERROutput );
-
-//		mysettings.setValue( "HeatMapRowCount", m_mainWindow->m_Config_HeatMapRowCount );
-//		mysettings.setValue( "HeatMapRowHeight", m_mainWindow->m_Config_HeatMapRowHeight );
-//		mysettings.setValue( "HeatMapColumnWidth", m_mainWindow->m_Config_HeatMapColumnWidth );
-
 	}
 	QDialog::done( result );
 }
