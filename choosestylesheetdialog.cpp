@@ -20,6 +20,7 @@
 
 #include "choosestylesheetdialog.h"
 #include "ui_choosestylesheetdialog.h"
+#include "mainwindow.h"
 
 #include <QSettings>
 
@@ -31,6 +32,13 @@ ChooseStylesheetDialog::ChooseStylesheetDialog(QWidget *parent) :
     ui(new Ui::ChooseStylesheetDialog)
 {
     ui->setupUi(this);
+
+	m_mainWindow = dynamic_cast<MainWindow*>(parent);
+	if (m_mainWindow == NULL)
+	{
+		return;
+	}
+
 	readSettings();
 }
 
@@ -62,7 +70,7 @@ void ChooseStylesheetDialog::done( int result )
 *******************************************************************************/
 void ChooseStylesheetDialog::readSettings()
 {
-	QSettings settings( "AdaptiveComputing", "NBrowseLog" );
+	QSettings settings( m_mainWindow->SETTINGS_ADAPTIVE_COMPUTING, m_mainWindow->SETTINGS_TORQUEVIEW );
 	//settings.beginGroup(metaObject()->className());
 	QString style = settings.value("StyleSheetName", "Default").toString();
 	for (int i = 0; i < ui->styleCombo->count(); ++i) {
@@ -78,7 +86,7 @@ void ChooseStylesheetDialog::readSettings()
 *******************************************************************************/
 void ChooseStylesheetDialog::writeSettings()
 {
-	QSettings settings( "AdaptiveComputing", "NBrowseLog" );
+	QSettings settings( m_mainWindow->SETTINGS_ADAPTIVE_COMPUTING, m_mainWindow->SETTINGS_TORQUEVIEW );
 	//settings.beginGroup(metaObject()->className());
 	settings.setValue("StyleSheetName", ui->styleCombo->currentText());
 }

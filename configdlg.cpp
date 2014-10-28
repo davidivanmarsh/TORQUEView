@@ -232,11 +232,15 @@ void ConfigDlg::updateCommandListWithLocal()
     item->setText(0, QString("Scp a file (local to remote)"));
     item->setText(1, m_mainWindow->SETTINGS_CMD_Scp_FromLocalToRemote);
 
-    item = new QTreeWidgetItem(ui->treeWidget_Commands);
-    item->setText(0, QString("Copy a file"));
-    item->setText(1, m_mainWindow->SETTINGS_CMD_Cp);
+	item = new QTreeWidgetItem(ui->treeWidget_Commands);
+	item->setText(0, QString("Copy a file"));
+	item->setText(1, m_mainWindow->SETTINGS_CMD_Cp);
 
-    item = new QTreeWidgetItem(ui->treeWidget_Commands);
+	item = new QTreeWidgetItem(ui->treeWidget_Commands);
+	item->setText(0, QString("'ls' command"));
+	item->setText(1, m_mainWindow->SETTINGS_CMD_Ls);
+
+	item = new QTreeWidgetItem(ui->treeWidget_Commands);
     item->setText(0, QString("Get pbs_server home dir"));
     item->setText(1, m_mainWindow->SETTINGS_CMD_GetServerHome);
 
@@ -393,11 +397,15 @@ void ConfigDlg::updateCommandListWithRemote( QString remoteServer )  // with rem
     item->setText(0, QString("Scp a file (local to remote)"));
     item->setText(1, QString("%1 %2").arg(m_mainWindow->SETTINGS_CMD_Scp_FromLocalToRemote).arg(m_mainWindow->m_Config_RemoteServer));
 
-    item = new QTreeWidgetItem(ui->treeWidget_Commands);
-    item->setText(0, QString("Copy a file"));
-    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Cp));
+	item = new QTreeWidgetItem(ui->treeWidget_Commands);
+	item->setText(0, QString("Copy a file"));
+	item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Cp));
 
-    item = new QTreeWidgetItem(ui->treeWidget_Commands);
+	item = new QTreeWidgetItem(ui->treeWidget_Commands);
+	item->setText(0, QString("'ls' command"));
+	item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Ls));
+
+	item = new QTreeWidgetItem(ui->treeWidget_Commands);
     item->setText(0, QString("Get pbs_server home dir"));
     item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_GetServerHome));
 
@@ -514,9 +522,9 @@ void ConfigDlg::done( int result )
 	if ( result == QDialog::Accepted )
 	{
 		if (ui->rbtn_Remote->isChecked())
-			m_mainWindow->m_Config_DataSource = 1;
+			m_mainWindow->m_Config_DataSource = dataSource_RemoteHost; // 1;
 		else
-			m_mainWindow->m_Config_DataSource = 0;
+			m_mainWindow->m_Config_DataSource = dataSource_LocalHost;  // 0;
 
 		m_mainWindow->m_Config_RemoteServer = ui->comboBox_Remote_Server->currentText();
 		m_mainWindow->m_Config_UsingMultiMoms = ui->checkBox_UsingMultiMoms->isChecked();

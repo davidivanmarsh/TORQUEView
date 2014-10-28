@@ -264,9 +264,17 @@ void QmgrTab::on_lineEdit_Qmgr_returnPressed()
 void QmgrTab::enableControls()
 {
     // data is "live" (i.e, from either a local or remote host instead of a snapshot file), so enable Submit functionality
-    ui->btnSubmit->setEnabled(true);
     ui->btnRefresh->setEnabled(true);
     ui->btnClear->setEnabled(true);
+
+	if (m_mainWindow->m_runningState == runningAs_AdminUser)  // if running With admin privileges
+	{
+		ui->btnSubmit->setEnabled(true);
+	}
+	else
+	{
+		ui->btnSubmit->setEnabled(false);
+	}
 }
 
 /*******************************************************************************

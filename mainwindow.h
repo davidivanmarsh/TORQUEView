@@ -45,12 +45,20 @@ enum ScheduleSnapshotsType
 	scheduleSnapshotsType_Hours		= 2
 };
 
-//enum RunningState
-//{
-//	runningState_Unknown	= 0,
-//	runningState_Admin		= 1,
-//	runningState_NormalUser = 2
-//};
+enum RunningState
+{
+	runningAs_AdminUser	 = 0,
+	runningAs_NormalUser = 1,
+	runningAs_Unknown	 = 100
+};
+
+enum DataSourceType
+{
+	dataSource_LocalHost	= 0,
+	dataSource_RemoteHost	= 1,
+	dataSource_SnapshotFile	= 2,
+	dataSource_Unknown		= 100
+};
 
 
 class MainWindow : public QMainWindow
@@ -60,6 +68,9 @@ class MainWindow : public QMainWindow
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
+
+	QString SETTINGS_ADAPTIVE_COMPUTING;
+	QString SETTINGS_TORQUEVIEW;
 
 	QString SETTINGS_CMD_Pbsnodes;
 	QString SETTINGS_CMD_Momctl_d3;
@@ -88,7 +99,8 @@ public:
 	QString SETTINGS_CMD_Cat;			// cat a file
 	QString SETTINGS_CMD_Scp_FromRemoteToLocal;// scp a file (from remote src to local dest)
 	QString SETTINGS_CMD_Scp_FromLocalToRemote;// scp a file (from local src to remote dest)
-	QString SETTINGS_CMD_Cp;			// copya file
+	QString SETTINGS_CMD_Cp;			// copy a file
+	QString SETTINGS_CMD_Ls;			// "ls" command
 	QString SETTINGS_CMD_GetServerHome;
 //	QString SETTINGS_CMD_GetMOMHome;  // NOT NEEDED YET
 
@@ -115,8 +127,9 @@ public:
 	bool	m_Snapshot_SaveIndividualJobData;
 	bool takingSnapshot();
 
-//	void getRunningState();
-//	RunningState  m_bRunningState;
+	RunningState m_runningState;
+	RunningState getRunningState();
+
 
 	void switchToPbsNodesTab();
 	void showNodesRunningJob( QString jobId );
@@ -155,6 +168,7 @@ public:
 	QString m_Config_Cmd_Scp_FromRemoteToLocal;			// scp a file (remote to local)
 	QString m_Config_Cmd_Scp_FromLocalToRemote;			// scp a file (local to remote)
 	QString m_Config_Cmd_Cp;			// copy a file
+	QString m_Config_Cmd_Ls;			// "ls" command
 	QString m_Config_Cmd_GetServerHome;
 //	QString m_Config_Cmd_GetMOMHome;  // NOT NEEDED YET
 
@@ -186,7 +200,8 @@ public:
 
 	QString m_Config_RemoteServer;
 	QStringList m_Config_RemoteServerList;
-	int  m_Config_DataSource;  // 0="Local host", 1="Remote host", or 2="Snapshot file"
+	
+	DataSourceType m_Config_DataSource;  // 100="Unknown dataSource, 0="Local host", 1="Remote host", 2="Snapshot file"
 	bool m_Config_UsingMultiMoms;
 	bool m_Config_UseServiceToStartStopMOMs;
 //	bool m_Config_ShowSTDERROutput;

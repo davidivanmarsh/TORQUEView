@@ -76,14 +76,14 @@ void PbsServerTab::enableControls()
     ui->btnStopServer->setEnabled(true);
     ui->btnRefresh->setEnabled(true);
     ui->btnViewServerLog->setEnabled(true);
-//	if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
-//	{
+	if (m_mainWindow->m_runningState == runningAs_AdminUser)  // if running With admin privileges
+	{
 		ui->btnEditNodesFile->setEnabled(true);
-//	}
-//	else
-//	{
-//		ui->btnEditNodesFile->setEnabled(false);
-//	}
+	}
+	else
+	{
+		ui->btnEditNodesFile->setEnabled(false);
+	}
 }
 
 /*******************************************************************************
@@ -547,7 +547,7 @@ void PbsServerTab::on_btnEditNodesFile_clicked()
 	int result = QMessageBox::question(
 		this,
 		"Save Nodes File?",
-		QString("Are you sure you want to save changes to the \"nodes\" file?\n\nNOTE: As a precaution, the current \"nodes\" file will be renamed to:\n   %2")
+		QString("Save changes to the \"nodes\" file?\n\nNOTE: The current \"nodes\" file will be backed up to:\n   %2")
 				.arg(sDestFilename),
 		QMessageBox::No,
 		QMessageBox::Yes
@@ -599,8 +599,9 @@ bool PbsServerTab::loadLocalNodesFile( QString nodesFilename )
 	QFile file(nodesFilename);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		QMessageBox::critical(0, "Error reading file", QString("Error, unable to read file '%1'.")
-			.arg(nodesFilename));
+		// don't show this msg, since it won't be needed when detecting root-user privileges
+//		QMessageBox::critical(0, "Error reading file", QString("Error, unable to read file '%1'.")
+//			.arg(nodesFilename));
 		return false;
 	}
 
@@ -727,8 +728,8 @@ bool PbsServerTab::issueCmd_LoadNodesFile()  // execute a "load nodes file" comm
 		// see if there are any errors to display
 		if (!m_loadNodesFile_Stderr.isEmpty())
 		{
-			QMessageBox::critical(0, "Error issuing loadNodesFile command",
-								  QString("Error issuing loadNodesFile command.  Error message was: %1").arg(m_loadNodesFile_Stderr));
+		//	QMessageBox::critical(0, "Error issuing loadNodesFile command",
+		//						  QString("Error issuing loadNodesFile command.  Error message was: %1").arg(m_loadNodesFile_Stderr));
 		}
 //	}
 

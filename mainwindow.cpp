@@ -58,6 +58,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	QLocale::setDefault( QLocale(QLocale::English, QLocale::UnitedStates ));
+	SETTINGS_ADAPTIVE_COMPUTING = "AdaptiveComputing";
+	SETTINGS_TORQUEVIEW = "TORQUEView";
+
 
 //	QString s = QString("TORQUEView   (Version:  %1.%2.%3,  Built:  %4,  %5)")
 //			.arg(TORQUEVIEW_MAJOR).arg(TORQUEVIEW_MINOR).arg(TORQUEVIEW_BUILD).arg(__DATE__).arg(__TIME__);
@@ -131,6 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	SETTINGS_CMD_Scp_FromRemoteToLocal	= "scp";				// scp a file (remote to local)
 	SETTINGS_CMD_Scp_FromLocalToRemote	= "scp";				// scp a file (local to remote)
 	SETTINGS_CMD_Cp = "cp";					// copy a file
+	SETTINGS_CMD_Ls = "ls";					// "ls" command
 	SETTINGS_CMD_GetServerHome	 = "pbs_server --about";
 //	SETTINGS_CMD_GetMOMHome		 = "pbs_mom --about";	// NOT NEEDED YET
 	SETTINGS_CMD_ModifyJob		 = "qalter %1";
@@ -158,7 +162,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Snapshot_SaveIndividualNodeData = true;	// init to true
 	m_Snapshot_SaveIndividualJobData = true;	// init to true
 
-//	m_bRunningState = runningState_Unknown;  // init running state (later we'll find out if running as root or not)
+	m_runningState = runningAs_Unknown;			// init running state
+	m_Config_DataSource = dataSource_Unknown;	// init data source
 
 	setupStatusBar();
 
@@ -528,7 +533,7 @@ void MainWindow::on_btnBackSnapshotReplay_clicked()
 void MainWindow::readSettings()
 {
 	// get the settings
-	QSettings settings( "AdaptiveComputing", "TORQUEView" );
+	QSettings settings( SETTINGS_ADAPTIVE_COMPUTING, SETTINGS_TORQUEVIEW );
 
 	// load the style sheet
 	QString stylesheetname = settings.value( "StylesheetName" ).toString( );
@@ -558,7 +563,14 @@ void MainWindow::readSettings()
     m_Config_HeatMapRowHeight_WithNodeNames = settings.value( "HeatMapRowHeight_WithNodeNames", "22" ).toInt( );
     m_Config_HeatMapColumnWidth_WithNodeNames = settings.value( "HeatMapColumnWidth_WithNodeNames", "72" ).toInt( );
 
-	m_Config_DataSource = settings.value( "DataSource", 0 ).toInt( );  // 0="Local host", 1="Remote host", or 2="Snapshot file"
+	int dataSource = settings.value( "DataSource", 100 ).toInt( );  // 100="Unknown", 0="Local host", 1="Remote host", or 2="Snapshot file"
+	switch (dataSource) {
+	case 0: m_Config_DataSource = dataSource_LocalHost; break;
+	case 1: m_Config_DataSource = dataSource_RemoteHost; break;
+	case 2: m_Config_DataSource = dataSource_SnapshotFile; break;
+	default:
+	case 100: m_Config_DataSource = dataSource_Unknown; break;
+	}
 	m_Config_RemoteServer = settings.value( "RemoteServer" ).toString( );
 	m_Config_RemoteServerList = settings.value( "RemoteServerList" ).toStringList( );
 	m_Config_UsingMultiMoms = settings.value( "UsingMultiMoms", false ).toBool( );
@@ -589,7 +601,10 @@ void MainWindow::readSettings()
 *******************************************************************************/
 void MainWindow::getConfigCmds()
 {
-    if (m_Config_DataSource == 0) // if "Local host"
+    switch (m_Config_DataSource) {
+    case 0:     // if "Local host"
+    case 2:     // if "Snapshot file"
+    case 100:   // if "Unknown"
     {
         m_Config_Cmd_Pbsnodes = SETTINGS_CMD_Pbsnodes;
         m_Config_Cmd_Momctl_d3 = SETTINGS_CMD_Momctl_d3;
@@ -618,8 +633,9 @@ void MainWindow::getConfigCmds()
         m_Config_Cmd_Cat = SETTINGS_CMD_Cat;
         m_Config_Cmd_Scp_FromRemoteToLocal = SETTINGS_CMD_Scp_FromRemoteToLocal;
         m_Config_Cmd_Scp_FromLocalToRemote = SETTINGS_CMD_Scp_FromLocalToRemote;
-        m_Config_Cmd_Cp = SETTINGS_CMD_Cp;
-        m_Config_Cmd_GetServerHome = SETTINGS_CMD_GetServerHome;
+		m_Config_Cmd_Cp = SETTINGS_CMD_Cp;
+		m_Config_Cmd_Ls = SETTINGS_CMD_Ls;
+		m_Config_Cmd_GetServerHome = SETTINGS_CMD_GetServerHome;
 //      m_Config_Cmd_GetMOMHome = SETTINGS_CMD_GetMOMHome;  // NOT NEEDED YET
 
 		m_Config_Cmd_ModifyJob = SETTINGS_CMD_ModifyJob;
@@ -632,9 +648,10 @@ void MainWindow::getConfigCmds()
 		m_Config_Cmd_RunJob = SETTINGS_CMD_RunJob;
 		m_Config_Cmd_SelectJob = SETTINGS_CMD_SelectJob;
 		m_Config_Cmd_SendSignalToJob = SETTINGS_CMD_SendSignalToJob;
-
-    }
-    else // else Remote host (or snapshot file, but set Remote values anyway...)
+		break;
+	}
+	case 1: // if "Remote host"
+	default:
     {
         m_Config_Cmd_Pbsnodes = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Pbsnodes);
         m_Config_Cmd_Momctl_d3 = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Momctl_d3);
@@ -663,8 +680,9 @@ void MainWindow::getConfigCmds()
         m_Config_Cmd_Cat = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Cat);
         m_Config_Cmd_Scp_FromRemoteToLocal = QString("%1 %2").arg(SETTINGS_CMD_Scp_FromRemoteToLocal).arg(m_Config_RemoteServer);
         m_Config_Cmd_Scp_FromLocalToRemote = QString("%1").arg(SETTINGS_CMD_Scp_FromLocalToRemote);
-        m_Config_Cmd_Cp = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Cp);
-        m_Config_Cmd_GetServerHome = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_GetServerHome);
+		m_Config_Cmd_Cp = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Cp);
+		m_Config_Cmd_Ls = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Ls);
+		m_Config_Cmd_GetServerHome = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_GetServerHome);
   //    m_Config_Cmd_GetMOMHome = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_GetMOMHome);
 
         m_Config_Cmd_ModifyJob        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_ModifyJob);
@@ -676,8 +694,9 @@ void MainWindow::getConfigCmds()
         m_Config_Cmd_ReleaseHoldOnJob = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_ReleaseHoldOnJob);
         m_Config_Cmd_SelectJob        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_SelectJob);
         m_Config_Cmd_SendSignalToJob  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_SendSignalToJob);
-
+        break;
     }
+    } // switch
 }
 
 /*******************************************************************************
@@ -685,9 +704,12 @@ void MainWindow::getConfigCmds()
 *******************************************************************************/
 void MainWindow::setConfigCmds()
 {
-	if (m_Config_DataSource == 0) // if "Local host"
-	{
-		m_Config_Cmd_Pbsnodes      = SETTINGS_CMD_Pbsnodes;
+    switch (m_Config_DataSource) {
+    case 0:     // if "Local host"
+    case 2:     // if "Snapshot file"
+    case 100:   // if "Unknown"
+    {
+        m_Config_Cmd_Pbsnodes      = SETTINGS_CMD_Pbsnodes;
 		m_Config_Cmd_Momctl_d3     = SETTINGS_CMD_Momctl_d3;
 		m_Config_Cmd_Qstat_R       = SETTINGS_CMD_Qstat_R;
 		m_Config_Cmd_Qstat_f       = SETTINGS_CMD_Qstat_f;
@@ -715,6 +737,7 @@ void MainWindow::setConfigCmds()
 		m_Config_Cmd_Scp_FromRemoteToLocal           = SETTINGS_CMD_Scp_FromRemoteToLocal;
 		m_Config_Cmd_Scp_FromLocalToRemote           = SETTINGS_CMD_Scp_FromLocalToRemote;
 		m_Config_Cmd_Cp            = SETTINGS_CMD_Cp;
+		m_Config_Cmd_Ls            = SETTINGS_CMD_Ls;
 		m_Config_Cmd_GetServerHome = SETTINGS_CMD_GetServerHome;
 	//  m_Config_Cmd_GetMOMHome    = SETTINGS_CMD_GetMOMHome;
 
@@ -728,9 +751,10 @@ void MainWindow::setConfigCmds()
 		m_Config_Cmd_RunJob           = SETTINGS_CMD_RunJob;
 		m_Config_Cmd_SelectJob        = SETTINGS_CMD_SelectJob;
 		m_Config_Cmd_SendSignalToJob  = SETTINGS_CMD_SendSignalToJob;
-
+		break;
 	}
-	else  // else Remote host (or snapshot file, but set Remote values anyway...)
+	case 1: // if "Remote host"
+	default:
 	{
 		m_Config_Cmd_Pbsnodes      = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Pbsnodes);
 		m_Config_Cmd_Momctl_d3     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Momctl_d3);
@@ -760,6 +784,7 @@ void MainWindow::setConfigCmds()
 		m_Config_Cmd_Scp_FromRemoteToLocal  = QString("%1 %2").arg(SETTINGS_CMD_Scp_FromRemoteToLocal).arg(m_Config_RemoteServer);
 		m_Config_Cmd_Scp_FromLocalToRemote  = QString("%1").arg(SETTINGS_CMD_Scp_FromLocalToRemote);
 		m_Config_Cmd_Cp            = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Cp);
+		m_Config_Cmd_Ls            = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Ls);
 		m_Config_Cmd_GetServerHome = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_GetServerHome);
 		//  m_Config_Cmd_GetMOMHome    = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_GetMOMHome);
 
@@ -772,10 +797,12 @@ void MainWindow::setConfigCmds()
 		m_Config_Cmd_ReleaseHoldOnJob = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_ReleaseHoldOnJob);
 		m_Config_Cmd_SelectJob        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_SelectJob);
 		m_Config_Cmd_SendSignalToJob  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_SendSignalToJob);
+		break;
 	}
+	} // switch
 
 	// save off settings
-	QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+	QSettings mysettings( SETTINGS_ADAPTIVE_COMPUTING, SETTINGS_TORQUEVIEW );
 //	mysettings.setValue( "DataSource", m_Config_DataSource );
 	mysettings.setValue( "RemoteServer", m_Config_RemoteServer );
 	mysettings.setValue( "RemoteServerList", m_Config_RemoteServerList );
@@ -800,38 +827,33 @@ void MainWindow::showNodesRunningJob( QString jobId )
 }
 
 /*******************************************************************************
- * This is the first point in TORQUETool initialization where we learn whether the
- * user is running with root privileges or not.  If not, so give the message
- * "Running without root-level privileges"
+ * Determine whether user is running with root privileges or not (for specified host,
+ * either local or remote.  If not, so give the message "Running without root-level
+ * privileges"
 *******************************************************************************/
-//void MainWindow::getRunningState()
-//{
-	// get the "nodes" filepath on the local host
-//	QString nodesFilename = QString("%1%2")
-//			.arg(m_Config_PbsServerHomeDir)
-//			.arg("/server_priv/nodes");
+RunningState MainWindow::getRunningState()
+{
+    RunningState runningState = runningAs_Unknown;
 
-//	// try to open "nodes" file for input -- if error, then user is not running as root
-//	QFile file(nodesFilename);
-//	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	// Find out if user is running with admin (root) privileges.
+	// This will try to do an "ls" on the server-priv directory, either locally on a remote server (depending
+	// on which data source is currently selected in the DataSource combobox)
+	bool bStatus = m_pbsNodesTab->issueCmd_AccessServerPrivDir();
+	if (!bStatus)
+	{
+		ErrorMsgDlg dlg("TORQUEView Message", "Running without root-level privileges",
+						"TORQUEView is being run without admin rights.  Certain features will not be available, such as:\n\n-Issuing \"momctl-d3\" commands\n-Start Mom command\n-Stop MOM command\n-Submitting commands to qmgr\n-Reading or editing the 'nodes' file\n",
+						false, true);
+		dlg.exec();
+		runningState = runningAs_NormalUser;  // running as normal user
+	}
+	else
+	{
+		runningState = runningAs_AdminUser;  // running as admin (root user)
+	}
 
-
-//	// this will try to open the nodes file, either locally on on a remote server (depending
-//	// on which data source is currently selected in the DataSource combobox)
-//	bool bStatus = m_pbsServerTab->issueCmd_LoadNodesFile();
-//	if (!bStatus)
-//	{
-//		ErrorMsgDlg dlg("TORQUEView Message", "Running without root-level privileges",
-//						"TORQUEView is being run without administrative (root)-level privileges.  Certain features will not be available, such as:\n\n-Issuing \"momctl-d3\" commands\n-Start Mom command\n-Stop MOM command\n-Accessing Nodes file\n",
-//						false, true);
-//		dlg.exec();
-//		m_bRunningState = runningState_NormalUser;  // running as normal user
-//	}
-//	else
-//	{
-//		m_bRunningState = runningState_Admin;  // running as admin (root user)
-//	}
-//}
+	return runningState;
+}
 
 /*******************************************************************************
  *
@@ -840,23 +862,55 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 {
 	bool bStatus = true; // success
 
-	ui->comboBox_DataSource->blockSignals(true);	// prevent currentIndexChanged signals from being received
+	ui->comboBox_DataSource->blockSignals(true);		// prevent currentIndexChanged signals from being received
 	ui->comboBox_Remote_Servers->blockSignals(true);	// prevent currentIndexChanged signals from being received
 
-
-	if (m_Config_DataSource == 0 || m_Config_DataSource == 1) //if datasource is either 0="Local host" or 1="Remote host"
+	switch (m_Config_DataSource) {
+	case 0: // "Local host"
+	case 1: // "Remote host"
 	{
 		ui->label_SnapshotFilename->hide();
 		ui->lineEdit_SnapshotFilename->hide();
 		ui->btnBrowse->hide();
 
-		m_pbsNodesTab->issueCmd_GetServerHome();	// get the pbs_server's "serverhome" directory
-//		m_pbsNodesTab->issueCmd_GetMOMHome();		// get the pbs_mom's "serverhome" directory  -- NOT NEEDED YET
-//		if (m_bRunningState == runningState_Unknown) // are we running as root user (with admin privileges)?
-//			getRunningState(); // set the running state (either normal user or admin user)
 
 		if (m_Config_DataSource == 1) // if is "Remote"
 		{
+			// --------------------------------------------------
+			// 0) On a Remote Host: See if remote host has been selected
+			// --------------------------------------------------
+			if (m_Config_RemoteServer.isEmpty())  // if no Remote Server was yet selected, then there's no point in going on
+			{
+				// init lists before exiting
+				m_pbsNodesTab->clearLists();
+				m_qstatTab->clearLists();
+				m_qmgrTab->clearLists();
+				m_pbsServerTab->clearLists();
+				m_heatMapTab->clearLists();
+				ui->comboBox_DataSource->setCurrentIndex(1);	// 1 == Remote
+
+				ui->comboBox_DataSource->blockSignals(false);	// allow currentIndexChanged signals to be received
+				ui->comboBox_Remote_Servers->blockSignals(false);	// allow currentIndexChanged signals to be received
+				return;
+			}
+			// --------------------------------------------------
+			// 1) On that Remote Host: See if TORQUE has been installed and is running.
+			// This will issue a "pbs_server --about" cmd (on the remote server)
+			// --------------------------------------------------
+			if (! m_pbsNodesTab->issueCmd_GetServerHome())	// get the pbs_server's "serverhome" directory
+			{
+			}
+			// --------------------------------------------------
+			// 2) On that Remote Host: See whether running with admin privileges (as "root")
+			// This will issue an "ls" cmd on the server-priv directory (on the remote server)
+			// --------------------------------------------------
+			if (m_runningState == runningAs_Unknown) // are we running as root user (with admin privileges)?
+				m_runningState = getRunningState(); // set the running state (either normal user or admin (root) user)
+
+	//		m_pbsNodesTab->issueCmd_GetMOMHome();		// get the pbs_mom's "serverhome" directory  -- NOT NEEDED YET
+
+
+
 			ui->comboBox_DataSource->setCurrentIndex(1);	// 1 == Remote
 
 			ui->comboBox_Remote_Servers->clear();
@@ -874,6 +928,23 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 		}
 		else  // else is "Local"
 		{
+			// --------------------------------------------------
+			// 1) On Local Host: See if TORQUE has been installed and is running
+			// This will issue a "pbs_server --about" cmd (on the local server)
+			// --------------------------------------------------
+			if (! m_pbsNodesTab->issueCmd_GetServerHome())	// get the pbs_server's "serverhome" directory
+			{
+			}
+			// --------------------------------------------------
+			// 2) On Local Host: See whether running with admin privileges (as "root")
+			// This will issue an "ls" cmd on the server-priv directory (on the local server)
+			// --------------------------------------------------
+			if (m_runningState == runningAs_Unknown) // are we running as root user (with admin privileges)?
+				m_runningState = getRunningState(); // set the running state (either normal user or admin (root) user)
+
+	//		m_pbsNodesTab->issueCmd_GetMOMHome();		// get the pbs_mom's "serverhome" directory  -- NOT NEEDED YET
+
+
 			ui->label_RemoteServers->hide();
 			ui->comboBox_DataSource->setCurrentIndex(0);	// 0 == Local
 			ui->label_RemoteServers->hide();
@@ -898,7 +969,6 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 
 //		QString lastJobId = m_qstatTab->getLastJobId();
 
-
 		bStatus = m_pbsNodesTab->issueCmd_Pbsnodes();	// re-init the pbsnodes lists from the cmdline "pbnodes" command
 		if (bStatus)
 			bStatus = m_pbsNodesTab->selectLastPbsnode();  // select last pbsnode in the Node list (to populate the other pbsnodes lists)
@@ -917,23 +987,26 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 		}
 		if (bStatus)
 			bStatus = m_pbsServerTab->issueCmd_PbsServer();
-//		if (m_bRunningState == runningState_Admin)  // if running With admin privileges
-//		{
+		if (m_runningState == runningAs_AdminUser)  // if running With admin privileges
+		{
 			if (bStatus)
 				bStatus = m_pbsServerTab->issueCmd_LoadNodesFile();
-//		}
-//		else
-//		{
-//			// "(Not running with admin rights. "Nodes" file contents unavailable.")
-//			m_pbsServerTab->showNoAdminRightsText();
-//		}
+		}
+		else
+		{
+			// "(Not running with admin rights. "Nodes" file contents unavailable.")
+			m_pbsServerTab->showNoAdminRightsText();
+		}
 
 
 //		ui->btnBrowse->setEnabled(false);
 //		ui->label_SnapshotFilename->setEnabled(false);
 //		ui->lineEdit_SnapshotFilename->setEnabled(false);
-	}
-	else  // else dataSource is from a snapshot file
+
+		break;
+	} // end of cases 0 & 1 -- Local host & Remote host
+
+	case 2:  // "snapshot file"
 	{
 		ui->label_SnapshotFilename->show();
 		ui->lineEdit_SnapshotFilename->show();
@@ -1040,7 +1113,26 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 //		ui->btnBrowse->setEnabled(true);
 //		ui->label_SnapshotFilename->setEnabled(true);
 //		ui->lineEdit_SnapshotFilename->setEnabled(true);
-    }
+
+        break;
+    } // end of case 2 -- Snapshot file
+
+    case 100: // Unknown data source
+    default:
+    {
+        // (this happens when user runs TORQUEView for the first time when no local TORQUE system
+        // exists (Local Host is the default Data Source)-- we don't want to display any errors to
+        // the user in this case)
+
+		// init lists before exiting
+		m_pbsNodesTab->clearLists();
+		m_qstatTab->clearLists();
+		m_qmgrTab->clearLists();
+		m_pbsServerTab->clearLists();
+		m_heatMapTab->clearLists();
+		break;
+	}
+	} // switch
 
     if (m_Config_HeatMapShowNodeNames)
         m_heatMapTab->checkShowNodeNamesCheckbox(true);
@@ -1091,11 +1183,15 @@ void MainWindow::on_checkBox_AutoRefresh_stateChanged()
 
 
 /*******************************************************************************
- *
+ *  This signal is sent when the user chooses an item in the combobox. The item's
+ *  index is passed. Note that this signal is sent even when the choice is not
+ *  changed. If you need to know when the choice actually changes, use signal
+ *  currentIndexChanged().
 *******************************************************************************/
 void MainWindow::on_comboBox_DataSource_activated ( int index )
 {
-	m_Config_DataSource = index;
+	m_Config_DataSource = (DataSourceType)index;
+	m_runningState = runningAs_Unknown;  // reset to "Unknown" -- forces TORQUEView to re-determine runningState in initAllTabs()
 
 	switch(index) {
 	case 0: // "Local host"
@@ -1146,7 +1242,7 @@ void MainWindow::on_comboBox_DataSource_activated ( int index )
 	// usually be blank and the user won't know why)
 	m_pbsNodesTab->checkShowNodesRunningJobIDCheckbox(false);
 
-	QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+	QSettings mysettings( SETTINGS_ADAPTIVE_COMPUTING, SETTINGS_TORQUEVIEW );
 	mysettings.setValue( "DataSource", index );  // do this BEFORE calling readSettings! -- it depends on it
 
 	// reset the "DontShowThisAgain" checkbox in all STDERR error output dialogs (show the checkboxes)
@@ -1170,6 +1266,7 @@ void MainWindow::on_comboBox_Remote_Servers_currentIndexChanged ( const QString 
 //	m_pbsNodesTab->clearNodesRunningJob();	// clear out any "show nodes running current job" stuff
 
 	getConfigCmds();// important -- update Config command variables!
+	m_runningState = runningAs_Unknown;  // reset to "Unknown" -- forces TORQUEView to re-determine runningState in initAllTabs()
 	initAllTabs( true ); // include qmgr
 
     // reset the "DontShowThisAgain" checkbox in all STDERR error output dialogs (show the checkboxes)
@@ -1179,7 +1276,7 @@ void MainWindow::on_comboBox_Remote_Servers_currentIndexChanged ( const QString 
     m_qmgrTab->resetErrorMsgDlg();
 
 	// save off settings
-	QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+	QSettings mysettings( SETTINGS_ADAPTIVE_COMPUTING, SETTINGS_TORQUEVIEW );
 	mysettings.setValue( "RemoteServer", m_Config_RemoteServer );
 }
 
@@ -1293,6 +1390,8 @@ void MainWindow::on_actionEdit_Server_List_triggered()
 	QStringList remoteServerList = dlg.m_List;
 	int listIndex = dlg.m_listIndex;
 
+	if (remoteServerList.isEmpty())
+		return;
 	m_Config_RemoteServerList = remoteServerList;
 
 	// don't let signal go through (don't let on_comboBox_Remote_Servers_currentIndexChanged()
@@ -1301,11 +1400,16 @@ void MainWindow::on_actionEdit_Server_List_triggered()
 	// add combobox items to ui->comboBox_Remote_Server
 	ui->comboBox_Remote_Servers->clear();
 	ui->comboBox_Remote_Servers->addItems(remoteServerList);
-	if (listIndex != -1) // if it's valid
-		ui->comboBox_Remote_Servers->setCurrentIndex(listIndex);  // select the currently-selected item in the dlg's list
-	ui->comboBox_Remote_Servers->blockSignals(false);
+	if (listIndex == -1) // if it's an invalid index..
+	{
+		ui->comboBox_Remote_Servers->blockSignals(false);  // un-block
+		return;
+	}
+	ui->comboBox_Remote_Servers->setCurrentIndex(listIndex);  // set the currently-selected item in the dlg's list
+	ui->comboBox_Remote_Servers->blockSignals(false); // un-block
 
 	m_Config_RemoteServer = ui->comboBox_Remote_Servers->currentText();
+	m_runningState = runningAs_Unknown;  // reset to "Unknown" -- forces TORQUEView to re-determine runningState in initAllTabs()
 
 	setConfigCmds();
 	initAllTabs(false); // don't include qmgr - Ken says it doesn't need to be updated on refresh
@@ -1355,9 +1459,9 @@ void MainWindow::on_btnReplaySnapshots_clicked()
 //  ui->comboBox_DataSource->blockSignals(true);	// prevent currentIndexChanged signals from being received
     ui->comboBox_DataSource->setCurrentIndex(2);  // 2=data is from Snapshot file
 //  ui->comboBox_DataSource->blockSignals(false);	// allow currentIndexChanged signals to be received
-    m_Config_DataSource = 2;
-    QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
-    mysettings.setValue( "DataSource", m_Config_DataSource );
+	m_Config_DataSource = dataSource_SnapshotFile;  // 2;
+	QSettings mysettings( SETTINGS_ADAPTIVE_COMPUTING, SETTINGS_TORQUEVIEW );
+	mysettings.setValue( "DataSource", 2 );
 
 
     on_btnCancelSnapshotScheduling_clicked();  // make sure Snapshot Scheduling is turned off
@@ -1413,7 +1517,7 @@ void MainWindow::on_actionOpen_triggered()
 		ui->lineEdit_SnapshotFilename->setText(filename);
 
 		// save off the filename in QSettings
-		QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+		QSettings mysettings( SETTINGS_ADAPTIVE_COMPUTING, SETTINGS_TORQUEVIEW );
 		mysettings.setValue( "TORQUEViewSnapshotFileName", filename );
 
 //		m_pbsNodesTab->on_btnClear_clicked();	// clear out any "show nodes running current job" stuff
@@ -1446,9 +1550,14 @@ void MainWindow::on_actionConfiguration_triggered()
 
     if (dlg.exec())
     {
+//      QStringList remoteServerList = dlg.m_List;
+//      if (remoteServerList.isEmpty())
+//          return;
 		setConfigCmds();
+		m_runningState = runningAs_Unknown;  // reset to "Unknown" -- forces TORQUEView to re-determine runningState in initAllTabs()
+
 		// save off settings (only those particular to the Config dlg - the other ones are saved in setConfigCmds())
-		QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+		QSettings mysettings( SETTINGS_ADAPTIVE_COMPUTING, SETTINGS_TORQUEVIEW );
 		mysettings.setValue( "DataSource", m_Config_DataSource );
 		mysettings.setValue( "UsingMultiMoms", m_Config_UsingMultiMoms );
 		mysettings.setValue( "UseServiceToStartStopMOMs", m_Config_UseServiceToStartStopMOMs );
@@ -1483,14 +1592,14 @@ void MainWindow::LoadStyleSheet(const QString &sheetName)
 *******************************************************************************/
 void MainWindow::on_actionChoose_Stylesheet_triggered()
 {
-	ChooseStylesheetDialog dlg;
+	ChooseStylesheetDialog dlg(this);
 	if (dlg.exec())
 	{
 		QString sheetName = dlg.iv_CurrentText;
 		LoadStyleSheet(sheetName);
 
 		// save off the stylesheet in QSettings
-		QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+		QSettings mysettings( SETTINGS_ADAPTIVE_COMPUTING, SETTINGS_TORQUEVIEW );
 		mysettings.setValue( "StylesheetName", sheetName );
 	}
 }

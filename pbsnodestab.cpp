@@ -226,7 +226,7 @@ bool PbsNodesTab::issueCmd_Pbsnodes()  // init app from "pbsnodes" command call
 		{
 //			QMessageBox::critical(0, "Error issuing pbsnodes command",
 //								  QString("Error issuing 'pbsnodes' command.  Error message was: %1").arg(m_pbsNode_Stderr));
-			ErrorMsgDlg dlg("TORQUEView Error", "Error issuing pbsnodes command. Error message:", m_pbsNode_Stderr);
+			ErrorMsgDlg dlg("TORQUEView Error", "Error issuing pbsnodes command. Error message:", m_pbsNode_Stderr, false, true );	// bool bShowCheckbox, bool bShowOKButtonOnly
 			dlg.exec();
 			if (dlg.isDontShowThisAgainChecked())  // see if the "Don't show this dialog again" checkbox was checked
 				m_showPbsnodesSTDERROutput = false;
@@ -1162,20 +1162,20 @@ void PbsNodesTab::initPbsnodesFromFile(QTextStream &in)
 *******************************************************************************/
 void PbsNodesTab::enableControls()
 {
-//	if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
-//	{
+	if (m_mainWindow->m_runningState == runningAs_AdminUser)  // if running With admin privileges
+	{
 		ui->actionStart_MOM->setEnabled(true);
 		ui->actionStart_MOM_Head_node->setEnabled(true);
 		ui->actionStop_MOM->setEnabled(true);
 		ui->actionStop_MOM_Head_node->setEnabled(true);
-//	}
-//	else // else don't enable the start/stop MOM commands
-//	{
-//		ui->actionStart_MOM->setEnabled(false);
-//		ui->actionStart_MOM_Head_node->setEnabled(false);
-//		ui->actionStop_MOM->setEnabled(false);
-//		ui->actionStop_MOM_Head_node->setEnabled(false);
-//	}
+	}
+	else // else don't enable the start/stop MOM commands
+	{
+		ui->actionStart_MOM->setEnabled(false);
+		ui->actionStart_MOM_Head_node->setEnabled(false);
+		ui->actionStop_MOM->setEnabled(false);
+		ui->actionStop_MOM_Head_node->setEnabled(false);
+	}
     ui->actionMark_node_as_OFFLINE->setEnabled(true);
     ui->actionClear_OFFLINE_Node->setEnabled(true);
     ui->actionAdd_Note->setEnabled(true);
@@ -1576,10 +1576,10 @@ void PbsNodesTab::writeDataToFile(QTextStream& out)
 
             if (m_mainWindow->m_Snapshot_SaveIndividualNodeData)  // only do this if user wants to include momctl -d3 data in snapshot file
             {
-//				if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
-//				{
+				if (m_mainWindow->m_runningState == runningAs_AdminUser)  // if running With admin privileges
+				{
 					issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort); // execute "momctl -d3" command call for that node -- parse output data
-//				}
+				}
                 // NOTE: since m_bTakingSnapshot is true, will add it to m_momCtl_Lines
             }
 		}
@@ -1682,21 +1682,21 @@ void PbsNodesTab::on_treeWidget_Nodes_itemSelectionChanged ()
 		int dataSource = m_mainWindow->getComboBox_DataSource_CurrentIndex();
 		if (dataSource == 0 || dataSource == 1)  // if data is coming from either Local host or Remote host
 		{
-//			if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
-//			{
+			if (m_mainWindow->m_runningState == runningAs_AdminUser)  // if running With admin privileges
+			{
 				issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort);
-//			}
-//			else
-//			{
-//				// show msg: "(Because user does not have admin rights, "momctl -d3" values are unavailable.)"
-//				QString sText1 = QString("(Not running with admin");
-//				QString sText2 = QString("rights -- values unavailable)");
-//				ui->treeWidget_MomCtl->clear();	// clear out list
-//				QTreeWidgetItem * itemLine1 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
-//				QTreeWidgetItem * itemLine2 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
-//				itemLine1->setText(0, sText1);
-//				itemLine2->setText(0, sText2);
-//			}
+			}
+			else
+			{
+				// show msg: "(Because user does not have admin rights, "momctl -d3" values are unavailable.)"
+				QString sText1 = QString("(Not running with admin");
+				QString sText2 = QString("rights -- values unavailable)");
+				ui->treeWidget_MomCtl->clear();	// clear out list
+				QTreeWidgetItem * itemLine1 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
+				QTreeWidgetItem * itemLine2 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
+				itemLine1->setText(0, sText1);
+				itemLine2->setText(0, sText2);
+			}
 		}
 		else  // else coming from snapshot file
 		{
@@ -3102,7 +3102,7 @@ void PbsNodesTab::getServerHome_getStderr()
 /*******************************************************************************
  *
 *******************************************************************************/
-void PbsNodesTab::getServerHome_processStdout() // parse the stdout data collected (above)
+bool PbsNodesTab::getServerHome_processStdout() // parse the stdout data collected (above)
 {
 //  QMessageBox::information(0, "got 'pbs_server --about'' info", m_getServerHome_Stdout);
 	QStringList lines = m_getServerHome_Stdout.split("\n");
@@ -3115,8 +3115,104 @@ void PbsNodesTab::getServerHome_processStdout() // parse the stdout data collect
 			{
 				QString s = sl[1];
 				m_mainWindow->m_Config_PbsServerHomeDir = s;
-				break;
+				return true;
 			}
 		}
 	}
+	return false;
 }
+
+
+/*******************************************************************************
+ * execute an "ls <serverPrivDir>" command to determine if we're running as root or not
+*******************************************************************************/
+bool PbsNodesTab::issueCmd_AccessServerPrivDir()  // execute an "ls <serverPrivDir>" command to determine if we're running with admin rights or not
+{
+	QString accessServerPrivDirectory;
+	// do an "ls" on the local host's server_priv dir (to find the "nodes" file)
+	accessServerPrivDirectory = QString("%1 %2%3")
+			.arg(m_mainWindow->m_Config_Cmd_Ls)
+			.arg(m_mainWindow->m_Config_PbsServerHomeDir)
+			.arg("/server_priv/nodes");
+
+	// show "Wait cursor"
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	m_accessServerPrivDir_Stdout.clear();
+	m_accessServerPrivDir_Stderr.clear();
+
+	m_accessServerPrivDirProcess = new QProcess(this);
+	connect (m_accessServerPrivDirProcess, SIGNAL(readyReadStandardOutput()),
+			 this, SLOT(accessServerPrivDir_getStdout())); // connect process signals with your code
+	connect (m_accessServerPrivDirProcess, SIGNAL(readyReadStandardError()),
+			 this, SLOT(accessServerPrivDir_getStderr())); // same here
+	m_accessServerPrivDirProcess->start( accessServerPrivDirectory );
+
+	if (!m_accessServerPrivDirProcess->waitForStarted())
+	{
+		QApplication::restoreOverrideCursor();
+		QMessageBox::critical(0, "Couldn't start 'loadNodesFile' process", "'loadNodesFile' process unable to start.  Torque is probably not running.\n");
+		return false;
+	}
+
+	if (!m_accessServerPrivDirProcess->waitForFinished(8000)) //If msecs is -1, this function will not time out
+	{
+		QApplication::restoreOverrideCursor();
+		QMessageBox::critical(0, "Error trying to complete loadNodesFile process", "Process's waitForFinished() method returned error.\n");
+		return false;
+	}
+
+	delete m_accessServerPrivDirProcess;
+	m_accessServerPrivDirProcess = NULL;
+
+
+	accessServerPrivDir_processStdout();
+
+	// restore the original cursor
+	QApplication::restoreOverrideCursor();
+
+
+//	if (m_mainWindow->m_Config_ShowSTDERROutput)
+//	{
+		// see if there are any errors to display
+		if (!m_accessServerPrivDir_Stderr.isEmpty())
+		{
+			// don't need to show an error here, since it will be handled in getRunningState() which shows the:
+			// "Running without root-level privileges" message
+		//	QMessageBox::critical(0, "Error issuing \"ls <server_priv directory\" command",
+		//						  QString("Error issuing 'ls <server_priv directory>' command.  Error message was:\n%1").arg(m_accessServerPrivDir_Stderr));
+			return false;
+		}
+//	}
+    return true;
+}
+
+/*******************************************************************************
+ *
+*******************************************************************************/
+// called from issueCmd_AccessServerPrivDir() - this gets called whenever the accessServerPrivDir process has something to say...
+void PbsNodesTab::accessServerPrivDir_getStdout()
+{
+	QByteArray s = m_accessServerPrivDirProcess->readAllStandardOutput(); // read normal output
+	m_accessServerPrivDir_Stdout.append( s );  // if there's any stdout
+}
+
+/*******************************************************************************
+ *
+*******************************************************************************/
+// called from issueCmd_AccessServerPrivDir() - this gets called whenever the accessServerPrivDir process has something to say...
+void PbsNodesTab::accessServerPrivDir_getStderr()
+{
+	QByteArray s = m_accessServerPrivDirProcess->readAllStandardError(); // read error channel
+	m_accessServerPrivDir_Stderr.append( s );  // if there's any stderr
+}
+
+/*******************************************************************************
+ *
+*******************************************************************************/
+bool PbsNodesTab::accessServerPrivDir_processStdout() // parse the stdout data collected (above)
+{
+    QStringList lines = m_accessServerPrivDir_Stdout.split("\n");
+    return true;
+}
+

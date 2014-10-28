@@ -44,7 +44,7 @@ public:
 
     void clearLists();
     bool issueCmd_PbsServer();
-    bool issueCmd_LoadNodesFile();
+	bool issueCmd_LoadNodesFile();
     bool issueCmd_CopyNodesFile( QString sDestFilename );
     bool issueCmd_SaveNodesFile();
     void writeDataToFile(QTextStream& out);

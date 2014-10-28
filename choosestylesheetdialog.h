@@ -23,6 +23,9 @@
 
 #include <QDialog>
 
+class MainWindow;
+
+
 namespace Ui {
 class ChooseStylesheetDialog;
 }
@@ -39,6 +42,8 @@ public:
 
 private:
     Ui::ChooseStylesheetDialog *ui;
+
+    MainWindow* m_mainWindow;
 
     void done( int result );
 	void readSettings();

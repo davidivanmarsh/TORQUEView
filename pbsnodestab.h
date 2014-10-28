@@ -115,6 +115,7 @@ public:
 	bool selectLastPbsnode();  // select (highlight) the last pbsnode the user selected - used by auto-refresh
 
 	bool issueCmd_GetServerHome();  // get pbs_server's "serverhome" dir  (issue "pbs_server --about" command and parse it)
+	bool issueCmd_AccessServerPrivDir();  // to find out if running as root or not
 	bool issueCmd_StartMOM(PbsNode* node, bool bIsHeadNode);  // issue "Start MOM" (pbs_mom)command
 	bool issueCmd_StopMOM(PbsNode* node, bool bIsHeadNode);  // issue "Stop MOM" (momctl -s) command
 
@@ -161,7 +162,11 @@ private slots:
 
 	void getServerHome_getStdout();
 	void getServerHome_getStderr();
-	void getServerHome_processStdout();
+	bool getServerHome_processStdout();
+
+	void accessServerPrivDir_getStdout();
+	void accessServerPrivDir_getStderr();
+	bool accessServerPrivDir_processStdout();
 
 	void pbsNodes_getStdout();
 	void pbsNodes_getStderr();
@@ -228,6 +233,8 @@ public:
 private:
 	QString m_getServerHome_Stdout;
 	QString m_getServerHome_Stderr;
+	QString m_accessServerPrivDir_Stdout;
+	QString m_accessServerPrivDir_Stderr;
 	QString m_pbsNode_Stdout;
 	QString m_pbsNode_Stderr;
 	QString m_momCtl_Stdout;
@@ -249,6 +256,7 @@ private:
 	QMap<QString, MomCtlItem*> m_momctlMap;  // used when reading in a combined pbsnodes/momctl data text file, and when updating the MomCtl treewidget
 
 	QProcess* m_getServerHomeProcess;
+	QProcess* m_accessServerPrivDirProcess;
 	QProcess* m_pbsNodesProcess;
 	QProcess* m_momctlProcess;
 	QProcess* m_startMOMProcess;

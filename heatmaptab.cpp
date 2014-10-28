@@ -209,7 +209,7 @@ void HeatMapTab::on_checkBox_ShowLists_stateChanged()
 void HeatMapTab::on_checkBox_ShowNodeNames_stateChanged()
 {
     bool bIsChecked = ui->checkBox_ShowNodeNames->isChecked();
-    QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+    QSettings mysettings( m_mainWindow->SETTINGS_ADAPTIVE_COMPUTING, m_mainWindow->SETTINGS_TORQUEVIEW );
     mysettings.setValue( "HeatMapShowNodeNames", bIsChecked );
 
     m_mainWindow->m_Config_HeatMapShowNodeNames = bIsChecked;
@@ -224,7 +224,7 @@ void HeatMapTab::on_checkBox_ShowNodeNames_stateChanged()
 *******************************************************************************/
 void HeatMapTab::on_spinBox_RowCount_valueChanged ( int i )
 {
-    QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+    QSettings mysettings( m_mainWindow->SETTINGS_ADAPTIVE_COMPUTING, m_mainWindow->SETTINGS_TORQUEVIEW );
     if (m_mainWindow->m_Config_HeatMapShowNodeNames)
     {
         m_mainWindow->m_Config_HeatMapRowCount_WithNodeNames = i;
@@ -245,7 +245,7 @@ void HeatMapTab::on_spinBox_RowCount_valueChanged ( int i )
 *******************************************************************************/
 void HeatMapTab::on_spinBox_RowHeight_valueChanged ( int i )
 {
-    QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+    QSettings mysettings( m_mainWindow->SETTINGS_ADAPTIVE_COMPUTING, m_mainWindow->SETTINGS_TORQUEVIEW );
     if (m_mainWindow->m_Config_HeatMapShowNodeNames)
     {
         m_mainWindow->m_Config_HeatMapRowHeight_WithNodeNames = i;
@@ -266,7 +266,7 @@ void HeatMapTab::on_spinBox_RowHeight_valueChanged ( int i )
 *******************************************************************************/
 void HeatMapTab::on_spinBox_ColumnWidth_valueChanged ( int i )
 {
-    QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+    QSettings mysettings( m_mainWindow->SETTINGS_ADAPTIVE_COMPUTING, m_mainWindow->SETTINGS_TORQUEVIEW );
     if (m_mainWindow->m_Config_HeatMapShowNodeNames)
     {
         m_mainWindow->m_Config_HeatMapColumnWidth_WithNodeNames = i;
@@ -447,20 +447,20 @@ bool HeatMapTab::updateLists()
 *******************************************************************************/
 void HeatMapTab::enableControls()
 {
-//	if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
-//	{
+	if (m_mainWindow->m_runningState == runningAs_AdminUser)  // if running With admin privileges
+	{
 		ui->actionStart_MOM->setEnabled(true);
 		ui->actionStart_MOM_Head_node->setEnabled(true);
 		ui->actionStop_MOM->setEnabled(true);
 		ui->actionStop_MOM_Head_node->setEnabled(true);
-//	}
-//	else // else don't enable the start/stop MOM commands
-//	{
-//		ui->actionStart_MOM->setEnabled(false);
-//		ui->actionStart_MOM_Head_node->setEnabled(false);
-//		ui->actionStop_MOM->setEnabled(false);
-//		ui->actionStop_MOM_Head_node->setEnabled(false);
-//	}
+	}
+	else // else don't enable the start/stop MOM commands
+	{
+		ui->actionStart_MOM->setEnabled(false);
+		ui->actionStart_MOM_Head_node->setEnabled(false);
+		ui->actionStop_MOM->setEnabled(false);
+		ui->actionStop_MOM_Head_node->setEnabled(false);
+	}
 	ui->actionMark_node_as_OFFLINE->setEnabled(true);
     ui->actionClear_OFFLINE_Node->setEnabled(true);
     ui->actionAdd_Note->setEnabled(true);
@@ -545,21 +545,21 @@ void HeatMapTab::on_tableWidget_Nodes_itemSelectionChanged ()
         int dataSource = m_mainWindow->getComboBox_DataSource_CurrentIndex();
         if (dataSource == 0 || dataSource == 1)  // if data is coming from either Local host or Remote host
         {
-//			if (m_mainWindow->m_bRunningState == runningState_Admin)  // if running With admin privileges
-//			{
+			if (m_mainWindow->m_runningState == runningAs_AdminUser)  // if running With admin privileges
+			{
 				issueCmd_Momctl_d3(node->m_nodeName, node->m_momManagerPort);
-//			}
-//			else
-//			{
-//				// show msg: "(Because user does not have admin rights, "momctl -d3" values are unavailable.)"
-//				QString sText1 = QString("(Not running with admin");
-//				QString sText2 = QString("rights -- values unavailable)");
-//				ui->treeWidget_MomCtl->clear();	// clear out list
-//				QTreeWidgetItem * itemLine1 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
-//				QTreeWidgetItem * itemLine2 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
-//				itemLine1->setText(0, sText1);
-//				itemLine2->setText(0, sText2);
-//			}
+			}
+			else
+			{
+				// show msg: "(Because user does not have admin rights, "momctl -d3" values are unavailable.)"
+				QString sText1 = QString("(Not running with admin");
+				QString sText2 = QString("rights -- values unavailable)");
+				ui->treeWidget_MomCtl->clear();	// clear out list
+				QTreeWidgetItem * itemLine1 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
+				QTreeWidgetItem * itemLine2 = new QTreeWidgetItem(ui->treeWidget_MomCtl);
+				itemLine1->setText(0, sText1);
+				itemLine2->setText(0, sText2);
+			}
         }
         else  // else coming from snapshot file
         {

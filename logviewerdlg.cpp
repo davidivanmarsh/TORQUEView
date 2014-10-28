@@ -55,7 +55,7 @@ LogViewerDlg::LogViewerDlg(MainWindow* mainWindow, const QString& logfilename, c
 	}
 
 	// set wrapLines checkBox
-	QSettings settings( "AdaptiveComputing", "TORQUEView" );
+	QSettings settings( m_mainWindow->SETTINGS_ADAPTIVE_COMPUTING, m_mainWindow->SETTINGS_TORQUEVIEW );
 	bool bWrapLines = settings.value( "WrapLines" ).toBool();
 	if (bWrapLines)
 	{
@@ -491,7 +491,7 @@ void LogViewerDlg::on_checkBox_WrapLines_toggled(bool checked)
 	}
 
 	// save off settings
-	QSettings mysettings( "AdaptiveComputing", "TORQUEView" );
+	QSettings mysettings( m_mainWindow->SETTINGS_ADAPTIVE_COMPUTING, m_mainWindow->SETTINGS_TORQUEVIEW );
 	// save off the wrapLines option settings -------------
 	bool bWrapLines = false;
 	if (checked)
