@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>737</width>
-    <height>453</height>
+    <height>474</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -174,7 +174,7 @@
       <item>
        <widget class="QLabel" name="label_SaveSnapshotFileAs">
         <property name="text">
-         <string>Base snapshot filename (will have date/time inserted):</string>
+         <string>Base snapshot filename (will have date/time appended):</string>
         </property>
        </widget>
       </item>
