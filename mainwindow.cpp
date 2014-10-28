@@ -1363,7 +1363,7 @@ void MainWindow::doReplaySnapshot()
 
     QString sSnapshotFilename = m_SnapshotReplay_Filelist[m_SnapshotReplay_Filelist_Index]; // (m_SnapshotReplay_Filelist_Index always needs to have something valid)
     ui->lineEdit_SnapshotFilename->setText(sSnapshotFilename);
-    initAllTabs(false); // don't include qmgr - Ken says it doesn't need to be updated on refresh
+    initAllTabs(true); // include qmgr
 
     QString s = QString("%1  --  Snapshot '%2' was replayed").arg(sNow).arg(sSnapshotFilename);
     statusBar()->showMessage(s, 12000);
@@ -1412,7 +1412,7 @@ void MainWindow::on_actionEdit_Server_List_triggered()
 	m_runningState = runningAs_Unknown;  // reset to "Unknown" -- forces TORQUEView to re-determine runningState in initAllTabs()
 
 	setConfigCmds();
-	initAllTabs(false); // don't include qmgr - Ken says it doesn't need to be updated on refresh
+	initAllTabs(true); // include qmgr
 }
 
 /*******************************************************************************
@@ -1430,7 +1430,7 @@ void MainWindow::on_actionRefresh_triggered()
 {
 	on_btnCancelSnapshotReplay_clicked();  // make sure SnapshotReplay isn't running
 
-	initAllTabs(false); // don't include qmgr - Ken says it doesn't need to be updated on refresh
+	initAllTabs(true); // include qmgr
 
 	QString s = "Lists have been refreshed...";
 	statusBar()->showMessage(s, 2000);
@@ -1525,7 +1525,7 @@ void MainWindow::on_actionOpen_triggered()
 
 		on_btnCancelSnapshotReplay_clicked();  // make sure SnapshotReplay isn't running
 
-		initAllTabs();
+		initAllTabs(true);
 	}
 }
 
@@ -1562,7 +1562,7 @@ void MainWindow::on_actionConfiguration_triggered()
 		mysettings.setValue( "UsingMultiMoms", m_Config_UsingMultiMoms );
 		mysettings.setValue( "UseServiceToStartStopMOMs", m_Config_UseServiceToStartStopMOMs );
 
-        initAllTabs(false); // don't include qmgr - Ken says it doesn't need to be updated on refresh
+        initAllTabs(true); // include qmgr
     }
 }
 
@@ -1619,7 +1619,7 @@ void MainWindow::on_btnSnapshot_clicked()
 	if (dlg.isRefreshListsChecked())
 	{
 		// refresh all lists before taking snapshot
-		initAllTabs();
+		initAllTabs(true);
 	}
 
 	m_Snapshot_ScheduleMultiple = dlg.isScheduleMultipleChecked();
