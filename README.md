@@ -43,7 +43,7 @@ TORQUEView was developed using the Qt application framework and needs to be buil
 ## TORQUEView - A Short User Guide
 
 David I. Marsh
-Last updated:  10/08/2014
+Last updated:  10/28/2014
 
 The TORQUEView is designed as a TORQUE GUI analysis and diagnostics tool. It lets you visually inspect TORQUE node and job lists, and allows you to control TORQUE operation by issuing a variety of commands to those nodes.
 
