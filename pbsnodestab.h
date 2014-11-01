@@ -152,7 +152,7 @@ private slots:
 	void on_treeWidget_Nodes_itemSelectionChanged();
 	void on_treeWidget_Nodes_itemDoubleClicked(QTreeWidgetItem* item, int column);
 	void on_actionHighlight_all_occurances_of_JobID_triggered();
-	void on_spinbox_JobID_valueChanged(int i);
+	void on_lineEdit_JobID_textChanged(const QString & text);
 	void on_checkBox_ShowNodesRunningJobID_stateChanged();
 
 	void on_radioButton_ShowCores_toggled();

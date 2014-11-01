@@ -109,7 +109,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	SETTINGS_CMD_Pbsnodes = "pbsnodes";
 	SETTINGS_CMD_Momctl_d3 = "momctl -d3 -h %1 -p %2";
 	SETTINGS_CMD_Qstat_R = "qstat -R";
-	SETTINGS_CMD_Qstat_f = "qstat -f %1";
+	SETTINGS_CMD_Qstat_f = "qstat -f -t %1";  // the "-t" option lets TORQUEView access job arrays
 	SETTINGS_CMD_Qmgr_c = "qmgr -c %1";
 	// start MOM
 	SETTINGS_CMD_StartMOM_HeadNode_Standard		= "pbs_mom";

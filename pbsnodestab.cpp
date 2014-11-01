@@ -68,8 +68,8 @@ PbsNodesTab::PbsNodesTab(QWidget *parent) :
 	ui->treeWidget_MomCtl->header()->resizeSection(0, 215);	// Label
 //	ui->treeWidget_MomCtl->header()->resizeSection(1, 125);	// Value
 
-	connect(ui->spinBox_JobID, SIGNAL(valueChanged(int)),
-		this, SLOT(on_spinbox_JobID_valueChanged(int)));
+	connect(ui->lineEdit_JobID, SIGNAL(textChanged(int)),
+		this, SLOT(on_lineEdit_JobID_textChanged(int)));
 //	// set column widths
 //	ui->tableWidget_Nodes->horizontalHeader()->resizeSection(0, 85);
 //	ui->tableWidget_Nodes->horizontalHeader()->resizeSection(1, 85);
@@ -415,13 +415,14 @@ void PbsNodesTab::pbsNodes_processStdout() // parse the stdout data collected (a
 /*******************************************************************************
  *
 *******************************************************************************/
-void PbsNodesTab::on_spinbox_JobID_valueChanged(int i)
+void PbsNodesTab::on_lineEdit_JobID_textChanged(const QString & text)
 {
-    Q_UNUSED(i); // to prevent warning
+    Q_UNUSED(text); // to prevent warning
 
-    // if user changed spinbox value, uncheck "checkBox_ShowNodesRunningJobID"
-    // REASON: we don't want to update Node list in the middle of user changing JobID spinbox value.
-    // Only change it when he's through changing JobID value and THEN has checked the spinbox_JobID checkbox.
+    // if user changed the lineEdit value, uncheck "checkBox_ShowNodesRunningJobID"
+    // REASON: we don't want to update Node list in the middle of user changing the lineEdit_JobID
+    // text. Only change it when he's through changing the JobID value and THEN has checked the
+    // checkBox_ShowNodesRunningJobID checkbox.
     ui->checkBox_ShowNodesRunningJobID->setChecked(false);
 }
 
@@ -470,7 +471,7 @@ void PbsNodesTab::on_treeWidget_Nodes_itemDoubleClicked(QTreeWidgetItem* item, i
 	if (column > 1)	// disregard Node or State columns
 	{
 		jobIDText = item->text(column);
-		ui->spinBox_JobID->setValue(jobIDText.toInt());  // display value in the JobID spinbox at the bottom of the screen
+		ui->lineEdit_JobID->setText(jobIDText);  // display value in the JobID field at the bottom of the screen
 	}
 
 	// iterate through treewidget list, getting all top-level items
@@ -579,7 +580,7 @@ void PbsNodesTab::updateLists()
 		{
 			QList<int> coreList;	// list of cores running jobs on this node
 			QList<QString> jobIDList;	// list of the JobIDs that are running on this node
-			QString targetJobID = QString("%1").arg(ui->spinBox_JobID->value());  // convert to string
+			QString targetJobID = ui->lineEdit_JobID->text();
 
 			bool bJobsPresent = true;
 			if (m_pbsNodes[i]->m_jobs.isEmpty())
@@ -1704,14 +1705,14 @@ void PbsNodesTab::on_treeWidget_Nodes_itemSelectionChanged ()
             populateMomctlFromFile(node->m_nodeName, ui->treeWidget_MomCtl, ui->label_Title_MomCtl);
 		}
 
-		// is user selected a jobID, copy it to the spinbox at the bottom
+		// is user selected a jobID, copy it to the lineedit field at the bottom
 		if (ui->radioButton_ShowCores->isChecked()) // don't try to copy if user is looking at Properties, not Cores!
 		{
 			int column = ui->treeWidget_Nodes->currentColumn();
 			if (column > 1)	// disregard Node or State columns
 			{
 				QString jobIDText = item->text(column);
-				ui->spinBox_JobID->setValue(jobIDText.toInt());  // display value in the JobID spinbox at the bottom of the screen
+				ui->lineEdit_JobID->setText(jobIDText);  // display value in the JobID field at the bottom of the screen
 			}
 		}
 
@@ -1989,7 +1990,7 @@ void PbsNodesTab::getNodeInfo(NodeState state, QString sMultipleStates, QString&
 *******************************************************************************/
 void PbsNodesTab::showNodesRunningJob( QString jobId/*, QString execHosts*/ )
 {
-    m_mainWindow->m_pbsNodesTab->setJobID(jobId);  // set the jobID value in pbsNodesTab's spinBox_JobID control
+    m_mainWindow->m_pbsNodesTab->setJobID(jobId);  // set the jobID value in pbsNodesTab's JobID lineedit control
     m_mainWindow->m_pbsNodesTab->checkShowNodesRunningJobIDCheckbox( true );
 }
 
@@ -1998,11 +1999,11 @@ void PbsNodesTab::showNodesRunningJob( QString jobId/*, QString execHosts*/ )
 *******************************************************************************/
 void PbsNodesTab::setJobID( QString jobID )
 {
-    // set the jobID value in pbsNodesTab's spinBox_JobID control
+    // set the jobID value in pbsNodesTab's JobID lineedit control
     // jobID will be in the format:  23097.acueo.ac
     QStringList sl = jobID.split(".");
     QString sJobID = sl[0];
-    ui->spinBox_JobID->setValue(sJobID.toInt());
+    ui->lineEdit_JobID->setText(jobID);
 }
 
 /*******************************************************************************
