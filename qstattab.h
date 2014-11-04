@@ -166,7 +166,7 @@ private:
 	Ui::QstatTab *ui;
 
 	MainWindow* m_mainWindow;
-	QString m_lastJobIdSelected;
+	QString m_lastJobIdSelected;  // will only be the numeric part of the actual jobID (i.e, the part before the first period)
 	QString m_lastExecHost;
 	QString m_lastExecPort;
 

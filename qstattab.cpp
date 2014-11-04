@@ -1060,7 +1060,17 @@ bool QstatTab::selectLastJobId()
 		for ( QTreeWidgetItemIterator it( ui->treeWidget_Jobs ); (*it) != NULL; ++it )
 		{
 			QString lastJobId = (*it)->text(0);
-			if (m_lastJobIdSelected == lastJobId)
+			// NOTE From Ken:  qstat truncates the job name. You cannot use the truncated name to look up a job id.
+			// You must use the job id number itself or you will need the full job id name.
+			// See on_treeWidget_Jobs_itemSelectionChanged() below.)
+
+			// Example: user gets this back from qstat: 420689.cottos.rq xuxiaofe courte dis_fluent.pbs 31251 2 -- -- 20:00 R 11:14
+			// but the real jobID is:  420689.cottos.rqchp.qc.ca
+			// So I need to truncate jobID returned from qstat ("420689.cottos.rq") and grab just the numeric part
+			// before the first dot ("420689").
+			QStringList sl = lastJobId.split(".");
+			QString jobIDNumber = sl[0];
+			if (m_lastJobIdSelected == jobIDNumber)
 			{
 				(*it)->setSelected( true );
 				return true;
@@ -1203,19 +1213,28 @@ void QstatTab::on_treeWidget_Jobs_itemSelectionChanged ()
 		QTreeWidgetItem* item = selectedItems[0];	// list is single-select
 
 		QString jobID = item->text(0);  // get text from column 0 (jobID)
+		// NOTE From Ken:  qstat truncates the job name. You cannot use the truncated name to look up a job id.
+		// You must use the job id number itself or you will need the full job id name.
+
+		// Example: user gets this back from qstat: 420689.cottos.rq xuxiaofe courte dis_fluent.pbs 31251 2 -- -- 20:00 R 11:14
+		// but the real jobID is:  420689.cottos.rqchp.qc.ca
+		// So I need to truncate jobID returned from qstat ("420689.cottos.rq") and grab just the numeric part
+		// before the first dot ("420689").
+		QStringList sl = jobID.split(".");
+		QString jobIDNumber = sl[0];
 
 		int dataSource = m_mainWindow->getComboBox_DataSource_CurrentIndex();
 		if (dataSource == 0 || dataSource == 1)  // if data is coming from either Local host or Remote host
 		{
-			issueCmd_Qstat_f(jobID);
+			issueCmd_Qstat_f(jobIDNumber);
 		}
 		else // else data is coming from snapshot file
 		{
 			// get the "qstat -f" output stringlist from the hash
-			populateQstat_f_FromFile(jobID);
+			populateQstat_f_FromFile(jobIDNumber);
 		}
 
-		m_lastJobIdSelected = jobID;  // save off jobID
+		m_lastJobIdSelected = jobIDNumber;  // save off jobID
 	}
 }
 
