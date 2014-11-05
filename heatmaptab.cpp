@@ -599,9 +599,11 @@ void HeatMapTab::issueCmd_Momctl_d3(QString nodeName, QString momManagerPort)  /
         return;
     }
 
-    if (!m_momctlProcess->waitForFinished(5000)) //If msecs is -1, this function will not time out
+    if (!m_momctlProcess->waitForFinished(10000)) //If msecs is -1, this function will not time out
     {
-        QMessageBox::critical(0, "Error trying to complete momctl process", "Process's waitForFinished() method returned error.\n");
+    //  QMessageBox::critical(0, "Error trying to complete momctl process", "Process's waitForFinished() method returned error.\n");
+        QMessageBox::critical(0, QString("momctl command timed out"),
+                 QString("TORQUEView timed out issuing \"momctl -d\" command for node: %1\n").arg(nodeName));
         QApplication::restoreOverrideCursor();
         return;
     }
@@ -639,8 +641,11 @@ void HeatMapTab::issueCmd_Momctl_d3(QString nodeName, QString momManagerPort)  /
 // called from momctlFromCmd() - this gets called whenever the momctl process has something to say...
 void HeatMapTab::momctl_getStdout()
 {
-    QByteArray s = m_momctlProcess->readAllStandardOutput(); // read normal output
-    m_momCtl_Stdout.append( s );  // if there's any stdout
+    if (m_momctlProcess != NULL)
+    {
+        QByteArray s = m_momctlProcess->readAllStandardOutput(); // read normal output
+        m_momCtl_Stdout.append( s );  // if there's any stdout
+    }
 }
 
 /*******************************************************************************
@@ -649,8 +654,11 @@ void HeatMapTab::momctl_getStdout()
 // called from momctlFromCmd() - this gets called whenever the momctl process has something to say...
 void HeatMapTab::momctl_getStderr()
 {
-    QByteArray s = m_momctlProcess->readAllStandardError(); // read error channel
-    m_momCtl_Stderr.append( s );  // if there's any stderr
+    if (m_momctlProcess != NULL)
+    {
+        QByteArray s = m_momctlProcess->readAllStandardError(); // read error channel
+        m_momCtl_Stderr.append( s );  // if there's any stderr
+    }
 }
 
 /*******************************************************************************

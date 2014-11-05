@@ -317,10 +317,12 @@ bool LogViewerDlg::issueCmd_tailLogfile(QString logfilename, bool bStart) // eit
 void LogViewerDlg::tailLogfile_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_tailLogfileProcess->readAllStandardOutput(); // read normal output
-//	m_tailLogfile_Stdout.append( stdout );  // if there's any stdout
-	ui->plainTextEdit_LogView->appendPlainText ( s );
-
+	if (m_tailLogfileProcess != NULL)
+	{
+		QByteArray s = m_tailLogfileProcess->readAllStandardOutput(); // read normal output
+	//	m_tailLogfile_Stdout.append( stdout );  // if there's any stdout
+		ui->plainTextEdit_LogView->appendPlainText ( s );
+	}
 }
 
 /*******************************************************************************
@@ -330,8 +332,11 @@ void LogViewerDlg::tailLogfile_getStdout()
 void LogViewerDlg::tailLogfile_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_tailLogfileProcess->readAllStandardError(); // read error channel
-	m_tailLogfile_Stderr.append( s );  // if there's any stderr
+	if (m_tailLogfileProcess != NULL)
+	{
+		QByteArray s = m_tailLogfileProcess->readAllStandardError(); // read error channel
+		m_tailLogfile_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -441,8 +446,11 @@ bool LogViewerDlg::issueCmd_grep(QString logfilename)
 void LogViewerDlg::grep_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_grepProcess->readAllStandardOutput(); // read normal output
-	m_grep_Stdout.append( s );  // if there's any stdout
+	if (m_grepProcess != NULL)
+	{
+		QByteArray s = m_grepProcess->readAllStandardOutput(); // read normal output
+		m_grep_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -452,8 +460,11 @@ void LogViewerDlg::grep_getStdout()
 void LogViewerDlg::grep_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_grepProcess->readAllStandardError(); // read error channel
-	m_grep_Stderr.append( s );  // if there's any stderr
+	if (m_grepProcess != NULL)
+	{
+		QByteArray s = m_grepProcess->readAllStandardError(); // read error channel
+		m_grep_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 

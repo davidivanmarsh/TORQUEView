@@ -201,8 +201,11 @@ bool PbsServerTab::issueCmd_PbsServer()  // execute a pbs_server status command 
 // called from issueCmd_PbsServer() - this gets called whenever the pbsServerStatus process has something to say...
 void PbsServerTab::pbsServerStatus_getStdout()
 {
-	QByteArray s = m_pbsServerStatusProcess->readAllStandardOutput(); // read normal output
-	m_pbsServerStatus_Stdout.append( s );  // if there's any stdout
+	if (m_pbsServerStatusProcess != NULL)
+	{
+		QByteArray s = m_pbsServerStatusProcess->readAllStandardOutput(); // read normal output
+		m_pbsServerStatus_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -211,8 +214,11 @@ void PbsServerTab::pbsServerStatus_getStdout()
 // called from issueCmd_PbsServer() - this gets called whenever the pbsServerStatus process has something to say...
 void PbsServerTab::pbsServerStatus_getStderr()
 {
-	QByteArray s = m_pbsServerStatusProcess->readAllStandardError(); // read error channel
-	m_pbsServerStatus_Stderr.append( s );  // if there's any stderr
+	if (m_pbsServerStatusProcess != NULL)
+	{
+		QByteArray s = m_pbsServerStatusProcess->readAllStandardError(); // read error channel
+		m_pbsServerStatus_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 /*******************************************************************************
@@ -326,8 +332,11 @@ int PbsServerTab::issueCmd_getLocalPbsServerPID()  // execute a command to get t
 // called from issueCmd_getLocalPbsServerPID() - this gets called whenever the getLocalPbsServerPID process has something to say...
 void PbsServerTab::getLocalPbsServerPID_getStdout()
 {
-	QByteArray s = m_getLocalPbsServerPIDProcess->readAllStandardOutput(); // read normal output
-	m_getLocalPbsServerPID_Stdout.append( s );  // if there's any stdout
+	if (m_getLocalPbsServerPIDProcess != NULL)
+	{
+		QByteArray s = m_getLocalPbsServerPIDProcess->readAllStandardOutput(); // read normal output
+		m_getLocalPbsServerPID_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -336,8 +345,11 @@ void PbsServerTab::getLocalPbsServerPID_getStdout()
 // called from issueCmd_getLocalPbsServerPID() - this gets called whenever the getLocalPbsServerPID process has something to say...
 void PbsServerTab::getLocalPbsServerPID_getStderr()
 {
-	QByteArray s = m_getLocalPbsServerPIDProcess->readAllStandardError(); // read error channel
-	m_getLocalPbsServerPID_Stderr.append( s );  // if there's any stderr
+	if (m_getLocalPbsServerPIDProcess != NULL)
+	{
+		QByteArray s = m_getLocalPbsServerPIDProcess->readAllStandardError(); // read error channel
+		m_getLocalPbsServerPID_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 /*******************************************************************************
@@ -752,8 +764,11 @@ bool PbsServerTab::issueCmd_LoadNodesFile()  // execute a "load nodes file" comm
 // called from issueCmd_LoadNodesFile() - this gets called whenever the loadNodesFile process has something to say...
 void PbsServerTab::loadNodesFile_getStdout()
 {
-	QByteArray s = m_loadNodesFileProcess->readAllStandardOutput(); // read normal output
-	m_loadNodesFile_Stdout.append( s );  // if there's any stdout
+	if (m_loadNodesFileProcess != NULL)
+	{
+		QByteArray s = m_loadNodesFileProcess->readAllStandardOutput(); // read normal output
+		m_loadNodesFile_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -762,8 +777,11 @@ void PbsServerTab::loadNodesFile_getStdout()
 // called from issueCmd_LoadNodesFile() - this gets called whenever the loadNodesFile process has something to say...
 void PbsServerTab::loadNodesFile_getStderr()
 {
-	QByteArray s = m_loadNodesFileProcess->readAllStandardError(); // read error channel
-	m_loadNodesFile_Stderr.append( s );  // if there's any stderr
+	if (m_loadNodesFileProcess != NULL)
+	{
+		QByteArray s = m_loadNodesFileProcess->readAllStandardError(); // read error channel
+		m_loadNodesFile_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 /*******************************************************************************
@@ -884,8 +902,11 @@ bool PbsServerTab::issueCmd_CopyNodesFile( QString sDestFilename )  // execute a
 // called from issueCmd_copyNodesFile() - this gets called whenever the copyNodesFile process has something to say...
 void PbsServerTab::copyNodesFile_getStdout()
 {
-	QByteArray s = m_copyNodesFileProcess->readAllStandardOutput(); // read normal output
-	m_copyNodesFile_Stdout.append( s );  // if there's any stdout
+	if (m_copyNodesFileProcess != NULL)
+	{
+		QByteArray s = m_copyNodesFileProcess->readAllStandardOutput(); // read normal output
+		m_copyNodesFile_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -894,8 +915,11 @@ void PbsServerTab::copyNodesFile_getStdout()
 // called from issueCmd_copyNodesFile() - this gets called whenever the copyNodesFile process has something to say...
 void PbsServerTab::copyNodesFile_getStderr()
 {
-	QByteArray s = m_copyNodesFileProcess->readAllStandardError(); // read error channel
-	m_copyNodesFile_Stderr.append( s );  // if there's any stderr
+	if (m_copyNodesFileProcess != NULL)
+	{
+		QByteArray s = m_copyNodesFileProcess->readAllStandardError(); // read error channel
+		m_copyNodesFile_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 /*******************************************************************************
@@ -1011,8 +1035,11 @@ bool PbsServerTab::issueCmd_SaveNodesFile()  // execute a "save nodes file" comm
 // called from issueCmd_saveNodesFile() - this gets called whenever the saveNodesFile process has something to say...
 void PbsServerTab::saveNodesFile_getStdout()
 {
-	QByteArray s = m_saveNodesFileProcess->readAllStandardOutput(); // read normal output
-	m_saveNodesFile_Stdout.append( s );  // if there's any stdout
+	if (m_saveNodesFileProcess != NULL)
+	{
+		QByteArray s = m_saveNodesFileProcess->readAllStandardOutput(); // read normal output
+		m_saveNodesFile_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -1021,8 +1048,11 @@ void PbsServerTab::saveNodesFile_getStdout()
 // called from issueCmd_saveNodesFile() - this gets called whenever the saveNodesFile process has something to say...
 void PbsServerTab::saveNodesFile_getStderr()
 {
-	QByteArray s = m_saveNodesFileProcess->readAllStandardError(); // read error channel
-	m_saveNodesFile_Stderr.append( s );  // if there's any stderr
+	if (m_saveNodesFileProcess != NULL)
+	{
+		QByteArray s = m_saveNodesFileProcess->readAllStandardError(); // read error channel
+		m_saveNodesFile_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 /*******************************************************************************

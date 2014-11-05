@@ -244,8 +244,11 @@ bool PbsNodesTab::issueCmd_Pbsnodes()  // init app from "pbsnodes" command call
 void PbsNodesTab::pbsNodes_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_pbsNodesProcess->readAllStandardOutput(); // read normal output
-	m_pbsNode_Stdout.append( s );  // if there's any stdout
+	if (m_pbsNodesProcess != NULL)
+	{
+		QByteArray s = m_pbsNodesProcess->readAllStandardOutput(); // read normal output
+		m_pbsNode_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -255,8 +258,11 @@ void PbsNodesTab::pbsNodes_getStdout()
 void PbsNodesTab::pbsNodes_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_pbsNodesProcess->readAllStandardError(); // read error channel
-	m_pbsNode_Stderr.append( s );  // if there's any stderr
+	if (m_pbsNodesProcess != NULL)
+	{
+		QByteArray s = m_pbsNodesProcess->readAllStandardError(); // read error channel
+		m_pbsNode_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -269,6 +275,8 @@ void PbsNodesTab::pbsNodes_processStdout() // parse the stdout data collected (a
 
 	PbsNode* node = NULL;
 
+	if (m_pbsNode_Stdout.isEmpty())
+		return;
 
 	QStringList lines = m_pbsNode_Stdout.split("\n");
 	foreach (QString line, lines)
@@ -599,26 +607,31 @@ void PbsNodesTab::updateLists()
 					//	"0-7/2844.c04a.ac"  -- the first values (0-7 here) is the range for cores running the job
 
 					QStringList parts = job.split("/");
-					int core = parts[0].toInt();
-					QStringList coreRange = parts[0].split("-");  // split on a "-" (dash)
-					QStringList sl = parts[1].split(".");
-					QString sJobID = sl[0];
-					if (coreRange.count() > 1)
+					int partsCount = parts.count();
+					if (partsCount > 1)  // only continue if something follows the core (i.e, if no jobID, then bail out)
 					{
-						int firstCore = coreRange[0].toInt();
-						int lastCore  = coreRange[1].toInt();
-						for (int k=firstCore; k<=lastCore; k++)
+						int core = parts[0].toInt();
+						QStringList coreRange = parts[0].split("-");  // split on a "-" (dash)
+						QStringList sl = parts[1].split(".");
+						QString sJobID = sl[0];
+
+						if (coreRange.count() > 1)
 						{
-						//	item->setText(core + 2 + k, sJobID); // show job currently running on this core (on this node)
-							coreList.append(k);
+							int firstCore = coreRange[0].toInt();
+							int lastCore  = coreRange[1].toInt();
+							for (int k=firstCore; k<=lastCore; k++)
+							{
+								//	item->setText(core + 2 + k, sJobID); // show job currently running on this core (on this node)
+								coreList.append(k);
+								jobIDList.append(sJobID);
+							}
+						}
+						else
+						{
+							//	item->setText(core + 2, sJobID); // show job currently running on this core (on this node)
+							coreList.append(core);
 							jobIDList.append(sJobID);
 						}
-					}
-					else
-					{
-					//	item->setText(core + 2, sJobID); // show job currently running on this core (on this node)
-						coreList.append(core);
-						jobIDList.append(sJobID);
 					}
 
 				}
@@ -1292,9 +1305,11 @@ void PbsNodesTab::issueCmd_Momctl_d3(QString nodeName, QString momManagerPort)  
 		return;
 	}
 
-	if (!m_momctlProcess->waitForFinished(5000)) //If msecs is -1, this function will not time out
+	if (!m_momctlProcess->waitForFinished(10000)) //If msecs is -1, this function will not time out
 	{
-		QMessageBox::critical(0, "Error trying to complete momctl process", "Process's waitForFinished() method returned error.\n");
+	//	QMessageBox::critical(0, "Error trying to complete momctl process", "Process's waitForFinished() method returned error.\n");
+		QMessageBox::critical(0, QString("momctl command timed out"),
+			 QString("TORQUEView timed out issuing \"momctl -d\" command for node: %1\n").arg(nodeName));
 		QApplication::restoreOverrideCursor();
 		return;
 	}
@@ -1332,8 +1347,11 @@ void PbsNodesTab::issueCmd_Momctl_d3(QString nodeName, QString momManagerPort)  
 // called from momctlFromCmd() - this gets called whenever the momctl process has something to say...
 void PbsNodesTab::momctl_getStdout()
 {
-	QByteArray s = m_momctlProcess->readAllStandardOutput(); // read normal output
-	m_momCtl_Stdout.append( s );  // if there's any stdout
+	if (m_momctlProcess != NULL)
+	{
+		QByteArray s = m_momctlProcess->readAllStandardOutput(); // read normal output
+		m_momCtl_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -1342,8 +1360,11 @@ void PbsNodesTab::momctl_getStdout()
 // called from momctlFromCmd() - this gets called whenever the momctl process has something to say...
 void PbsNodesTab::momctl_getStderr()
 {
-	QByteArray s = m_momctlProcess->readAllStandardError(); // read error channel
-	m_momCtl_Stderr.append( s );  // if there's any stderr
+	if (m_momctlProcess != NULL)
+	{
+		QByteArray s = m_momctlProcess->readAllStandardError(); // read error channel
+		m_momCtl_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 /*******************************************************************************
@@ -1355,6 +1376,8 @@ void PbsNodesTab::momctl_processStdout() // parse the stdout data collected (abo
 
 	bool bFirstLine = true;
 
+	if (m_momCtl_Stdout.isEmpty())
+		return;
 
 	QStringList lines = m_momCtl_Stdout.split("\n");
 	foreach (QString line, lines)
@@ -2257,8 +2280,11 @@ bool PbsNodesTab::issueCmd_StartMOM( PbsNode* node, bool bIsHeadNode )  // issue
 void PbsNodesTab::startMOM_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_startMOMProcess->readAllStandardOutput(); // read normal output
-	m_startMOM_Stdout.append( s );  // if there's any stdout
+	if (m_startMOMProcess != NULL)
+	{
+		QByteArray s = m_startMOMProcess->readAllStandardOutput(); // read normal output
+		m_startMOM_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -2268,8 +2294,11 @@ void PbsNodesTab::startMOM_getStdout()
 void PbsNodesTab::startMOM_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_startMOMProcess->readAllStandardError(); // read error channel
-	m_startMOM_Stderr.append( s );  // if there's any stderr
+	if (m_startMOMProcess != NULL)
+	{
+		QByteArray s = m_startMOMProcess->readAllStandardError(); // read error channel
+		m_startMOM_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -2396,8 +2425,11 @@ bool PbsNodesTab::issueCmd_StopMOM( PbsNode* node, bool bIsHeadNode )  // issue 
 void PbsNodesTab::stopMOM_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_stopMOMProcess->readAllStandardOutput(); // read normal output
-	m_stopMOM_Stdout.append( s );  // if there's any stdout
+	if (m_stopMOMProcess != NULL)
+	{
+		QByteArray s = m_stopMOMProcess->readAllStandardOutput(); // read normal output
+		m_stopMOM_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -2407,8 +2439,11 @@ void PbsNodesTab::stopMOM_getStdout()
 void PbsNodesTab::stopMOM_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_stopMOMProcess->readAllStandardError(); // read error channel
-	m_stopMOM_Stderr.append( s );  // if there's any stderr
+	if (m_stopMOMProcess != NULL)
+	{
+		QByteArray s = m_stopMOMProcess->readAllStandardError(); // read error channel
+		m_stopMOM_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -2546,8 +2581,11 @@ bool PbsNodesTab::issueCmd_MarkNodeAsOFFLINE( PbsNode* node )  // issue "Mark No
 void PbsNodesTab::markNodeAsOFFLINE_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_markNodeAsOFFLINEProcess->readAllStandardOutput(); // read normal output
-	m_markNodeAsOFFLINE_Stdout.append( s );  // if there's any stdout
+	if (m_markNodeAsOFFLINEProcess != NULL)
+	{
+		QByteArray s = m_markNodeAsOFFLINEProcess->readAllStandardOutput(); // read normal output
+		m_markNodeAsOFFLINE_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -2557,8 +2595,11 @@ void PbsNodesTab::markNodeAsOFFLINE_getStdout()
 void PbsNodesTab::markNodeAsOFFLINE_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_markNodeAsOFFLINEProcess->readAllStandardError(); // read error channel
-	m_markNodeAsOFFLINE_Stderr.append( s );  // if there's any stderr
+	if (m_markNodeAsOFFLINEProcess != NULL)
+	{
+		QByteArray s = m_markNodeAsOFFLINEProcess->readAllStandardError(); // read error channel
+		m_markNodeAsOFFLINE_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -2650,8 +2691,11 @@ bool PbsNodesTab::issueCmd_ClearOFFLINENode( PbsNode* node )  // issue "Clear OF
 void PbsNodesTab::clearOFFLINENode_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_clearOFFLINENodeProcess->readAllStandardOutput(); // read normal output
-	m_clearOFFLINENode_Stdout.append( s );  // if there's any stdout
+	if (m_clearOFFLINENodeProcess != NULL)
+	{
+		QByteArray s = m_clearOFFLINENodeProcess->readAllStandardOutput(); // read normal output
+		m_clearOFFLINENode_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -2661,8 +2705,11 @@ void PbsNodesTab::clearOFFLINENode_getStdout()
 void PbsNodesTab::clearOFFLINENode_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_clearOFFLINENodeProcess->readAllStandardError(); // read error channel
-	m_clearOFFLINENode_Stderr.append( s );  // if there's any stderr
+	if (m_clearOFFLINENodeProcess != NULL)
+	{
+		QByteArray s = m_clearOFFLINENodeProcess->readAllStandardError(); // read error channel
+		m_clearOFFLINENode_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -2825,8 +2872,11 @@ bool PbsNodesTab::issueCmd_AddNote( PbsNode* node, QString sAnnotation )
 void PbsNodesTab::addNote_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_addNoteProcess->readAllStandardOutput(); // read normal output
-	m_addNote_Stdout.append( s );  // if there's any stdout
+	if (m_addNoteProcess != NULL)
+	{
+		QByteArray s = m_addNoteProcess->readAllStandardOutput(); // read normal output
+		m_addNote_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -2836,8 +2886,11 @@ void PbsNodesTab::addNote_getStdout()
 void PbsNodesTab::addNote_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_addNoteProcess->readAllStandardError(); // read error channel
-	m_addNote_Stderr.append( s );  // if there's any stderr
+	if (m_addNoteProcess != NULL)
+	{
+		QByteArray s = m_addNoteProcess->readAllStandardError(); // read error channel
+		m_addNote_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -2928,8 +2981,11 @@ bool PbsNodesTab::issueCmd_RemoveNote( PbsNode* node )
 void PbsNodesTab::removeNote_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_removeNoteProcess->readAllStandardOutput(); // read normal output
-	m_removeNote_Stdout.append( s );  // if there's any stdout
+	if (m_removeNoteProcess != NULL)
+	{
+		QByteArray s = m_removeNoteProcess->readAllStandardOutput(); // read normal output
+		m_removeNote_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -2939,8 +2995,11 @@ void PbsNodesTab::removeNote_getStdout()
 void PbsNodesTab::removeNote_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_removeNoteProcess->readAllStandardError(); // read error channel
-	m_removeNote_Stderr.append( s );  // if there's any stderr
+	if (m_removeNoteProcess != NULL)
+	{
+		QByteArray s = m_removeNoteProcess->readAllStandardError(); // read error channel
+		m_removeNote_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -3084,8 +3143,11 @@ bool PbsNodesTab::issueCmd_GetServerHome()  // get pbs_server's "serverhome" dir
 void PbsNodesTab::getServerHome_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_getServerHomeProcess->readAllStandardOutput(); // read normal output
-	m_getServerHome_Stdout.append( s );  // if there's any stdout
+	if (m_getServerHomeProcess != NULL)
+	{
+		QByteArray s = m_getServerHomeProcess->readAllStandardOutput(); // read normal output
+		m_getServerHome_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -3095,8 +3157,11 @@ void PbsNodesTab::getServerHome_getStdout()
 void PbsNodesTab::getServerHome_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_getServerHomeProcess->readAllStandardError(); // read error channel
-	m_getServerHome_Stderr.append( s );  // if there's any stderr
+	if (m_getServerHomeProcess != NULL)
+	{
+		QByteArray s = m_getServerHomeProcess->readAllStandardError(); // read error channel
+		m_getServerHome_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -3194,8 +3259,11 @@ bool PbsNodesTab::issueCmd_AccessServerPrivDir()  // execute an "ls <serverPrivD
 // called from issueCmd_AccessServerPrivDir() - this gets called whenever the accessServerPrivDir process has something to say...
 void PbsNodesTab::accessServerPrivDir_getStdout()
 {
-	QByteArray s = m_accessServerPrivDirProcess->readAllStandardOutput(); // read normal output
-	m_accessServerPrivDir_Stdout.append( s );  // if there's any stdout
+	if (m_accessServerPrivDirProcess != NULL)
+	{
+		QByteArray s = m_accessServerPrivDirProcess->readAllStandardOutput(); // read normal output
+		m_accessServerPrivDir_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -3204,8 +3272,11 @@ void PbsNodesTab::accessServerPrivDir_getStdout()
 // called from issueCmd_AccessServerPrivDir() - this gets called whenever the accessServerPrivDir process has something to say...
 void PbsNodesTab::accessServerPrivDir_getStderr()
 {
-	QByteArray s = m_accessServerPrivDirProcess->readAllStandardError(); // read error channel
-	m_accessServerPrivDir_Stderr.append( s );  // if there's any stderr
+	if (m_accessServerPrivDirProcess != NULL)
+	{
+		QByteArray s = m_accessServerPrivDirProcess->readAllStandardError(); // read error channel
+		m_accessServerPrivDir_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 /*******************************************************************************

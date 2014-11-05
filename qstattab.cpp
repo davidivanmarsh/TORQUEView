@@ -507,8 +507,11 @@ bool QstatTab::issueCmd_Qstat_R()  // init the qstat tab from cmdline "qstat -R"
 void QstatTab::qstat_R_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_qstat_R_Process->readAllStandardOutput(); // read normal output
-	m_qstat_R_Stdout.append( s );  // if there's any stdout
+	if (m_qstat_R_Process != NULL)
+	{
+		QByteArray s = m_qstat_R_Process->readAllStandardOutput(); // read normal output
+		m_qstat_R_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -518,8 +521,11 @@ void QstatTab::qstat_R_getStdout()
 void QstatTab::qstat_R_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_qstat_R_Process->readAllStandardError(); // read error channel
-	m_qstat_R_Stderr.append( s );  // if there's any stderr
+	if (m_qstat_R_Process != NULL)
+	{
+		QByteArray s = m_qstat_R_Process->readAllStandardError(); // read error channel
+		m_qstat_R_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -850,8 +856,11 @@ bool QstatTab::issueCmd_Qstat_f( QString jobID )
 void QstatTab::qstat_f_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_qstat_f_Process->readAllStandardOutput(); // read normal output
-	m_qstat_f_Stdout.append( s );  // if there's any stdout
+	if (m_qstat_f_Process != NULL)
+	{
+		QByteArray s = m_qstat_f_Process->readAllStandardOutput(); // read normal output
+		m_qstat_f_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -861,8 +870,11 @@ void QstatTab::qstat_f_getStdout()
 void QstatTab::qstat_f_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_qstat_f_Process->readAllStandardError(); // read error channel
-	m_qstat_f_Stderr.append( s );  // if there's any stderr
+	if (m_qstat_f_Process != NULL)
+	{
+		QByteArray s = m_qstat_f_Process->readAllStandardError(); // read error channel
+		m_qstat_f_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -1556,8 +1568,11 @@ bool QstatTab::issueCmd_RunJob( QString jobID)
 void QstatTab::runJob_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_runJobProcess->readAllStandardOutput(); // read normal output
-	m_runJob_Stdout.append( s );  // if there's any stdout
+	if (m_runJobProcess != NULL)
+	{
+		QByteArray s = m_runJobProcess->readAllStandardOutput(); // read normal output
+		m_runJob_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -1567,8 +1582,11 @@ void QstatTab::runJob_getStdout()
 void QstatTab::runJob_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_runJobProcess->readAllStandardError(); // read error channel
-	m_runJob_Stderr.append( s );  // if there's any stderr
+	if (m_runJobProcess != NULL)
+	{
+		QByteArray s = m_runJobProcess->readAllStandardError(); // read error channel
+		m_runJob_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -1660,8 +1678,11 @@ bool QstatTab::issueCmd_DeleteJob( QString jobID)
 void QstatTab::deleteJob_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_deleteJobProcess->readAllStandardOutput(); // read normal output
-	m_deleteJob_Stdout.append( s );  // if there's any stdout
+	if (m_deleteJobProcess != NULL)
+	{
+		QByteArray s = m_deleteJobProcess->readAllStandardOutput(); // read normal output
+		m_deleteJob_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -1671,8 +1692,11 @@ void QstatTab::deleteJob_getStdout()
 void QstatTab::deleteJob_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_deleteJobProcess->readAllStandardError(); // read error channel
-	m_deleteJob_Stderr.append( s );  // if there's any stderr
+	if (m_deleteJobProcess != NULL)
+	{
+		QByteArray s = m_deleteJobProcess->readAllStandardError(); // read error channel
+		m_deleteJob_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -1764,8 +1788,11 @@ bool QstatTab::issueCmd_HoldJob( QString jobID)
 void QstatTab::holdJob_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_holdJobProcess->readAllStandardOutput(); // read normal output
-	m_holdJob_Stdout.append( s );  // if there's any stdout
+	if (m_holdJobProcess != NULL)
+	{
+		QByteArray s = m_holdJobProcess->readAllStandardOutput(); // read normal output
+		m_holdJob_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -1775,8 +1802,11 @@ void QstatTab::holdJob_getStdout()
 void QstatTab::holdJob_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_holdJobProcess->readAllStandardError(); // read error channel
-	m_holdJob_Stderr.append( s );  // if there's any stderr
+	if (m_holdJobProcess != NULL)
+	{
+		QByteArray s = m_holdJobProcess->readAllStandardError(); // read error channel
+		m_holdJob_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -1867,8 +1897,11 @@ bool QstatTab::issueCmd_ReleaseHoldOnJob( QString jobID)
 void QstatTab::releaseHoldOnJob_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_releaseHoldOnJobProcess->readAllStandardOutput(); // read normal output
-	m_releaseHoldOnJob_Stdout.append( s );  // if there's any stdout
+	if (m_releaseHoldOnJobProcess != NULL)
+	{
+		QByteArray s = m_releaseHoldOnJobProcess->readAllStandardOutput(); // read normal output
+		m_releaseHoldOnJob_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -1878,8 +1911,11 @@ void QstatTab::releaseHoldOnJob_getStdout()
 void QstatTab::releaseHoldOnJob_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_releaseHoldOnJobProcess->readAllStandardError(); // read error channel
-	m_releaseHoldOnJob_Stderr.append( s );  // if there's any stderr
+	if (m_releaseHoldOnJobProcess != NULL)
+	{
+		QByteArray s = m_releaseHoldOnJobProcess->readAllStandardError(); // read error channel
+		m_releaseHoldOnJob_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 
@@ -1970,8 +2006,11 @@ bool QstatTab::issueCmd_RerunJob( QString jobID)
 void QstatTab::rerunJob_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_rerunJobProcess->readAllStandardOutput(); // read normal output
-	m_rerunJob_Stdout.append( s );  // if there's any stdout
+	if (m_rerunJobProcess != NULL)
+	{
+		QByteArray s = m_rerunJobProcess->readAllStandardOutput(); // read normal output
+		m_rerunJob_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -1981,8 +2020,11 @@ void QstatTab::rerunJob_getStdout()
 void QstatTab::rerunJob_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	QByteArray s = m_rerunJobProcess->readAllStandardError(); // read error channel
-	m_rerunJob_Stderr.append( s );  // if there's any stderr
+	if (m_rerunJobProcess != NULL)
+	{
+		QByteArray s = m_rerunJobProcess->readAllStandardError(); // read error channel
+		m_rerunJob_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 

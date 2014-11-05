@@ -375,8 +375,11 @@ void QmgrTab::issueCmd_Qmgr(QString sCmd)  // execute a qmgr command -- parse ou
 // called from populateQmgrFromCmd() - this gets called whenever the qmgr process has something to say...
 void QmgrTab::qmgr_getStdout()
 {
-	QByteArray s = m_qmgrProcess->readAllStandardOutput(); // read normal output
-	m_qmgr_Stdout.append( s );  // if there's any stdout
+	if (m_qmgrProcess != NULL)
+	{
+		QByteArray s = m_qmgrProcess->readAllStandardOutput(); // read normal output
+		m_qmgr_Stdout.append( s );  // if there's any stdout
+	}
 }
 
 /*******************************************************************************
@@ -385,8 +388,11 @@ void QmgrTab::qmgr_getStdout()
 // called from populateQmgrFromCmd() - this gets called whenever the qmgr process has something to say...
 void QmgrTab::qmgr_getStderr()
 {
-	QByteArray s = m_qmgrProcess->readAllStandardError(); // read error channel
-	m_qmgr_Stderr.append( s );  // if there's any stderr
+	if (m_qmgrProcess != NULL)
+	{
+		QByteArray s = m_qmgrProcess->readAllStandardError(); // read error channel
+		m_qmgr_Stderr.append( s );  // if there's any stderr
+	}
 }
 
 /*******************************************************************************
