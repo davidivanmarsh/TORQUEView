@@ -210,6 +210,8 @@ private:
 
 	void populateQstat_f_FromFile( QString jobID );
 	void updateList();
+	QTreeWidgetItem* addHierarchyItem( QMap<QString,QTreeWidgetItem*>& heirarchyMap,
+		bool bShowJobsByQueue, QString queueStr, bool bIsJobArrayItem, QString jobArrayStr, bool bExpandAll );
 
 	void restoreExpandedState(); // expand any root-level items in Jobs list that previously were expanded
 

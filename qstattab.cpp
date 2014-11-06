@@ -172,9 +172,9 @@ void QstatTab::initQstatFromFile( QTextStream &in )  // init the qstat tab from 
 {
     m_pbsJobs.clear();
 
-    bool bShowHeirarchy = false;
-    if (ui->checkBox_ShowJobsByQueue->isChecked())
-        bShowHeirarchy = true;
+//    bool bShowHeirarchy = false;
+//    if (ui->checkBox_ShowJobsByQueue->isChecked())
+//        bShowHeirarchy = true;
 
 	bool bNodeNameSeen = false;  // have we come to the nodeName yet?
 
@@ -235,14 +235,11 @@ void QstatTab::initQstatFromFile( QTextStream &in )  // init the qstat tab from 
 	int columnCount = ui->treeWidget_Jobs->header()->count();
 	for(int i = 0; i < columnCount; i++)
 	{
-        if (i == 0 && bShowHeirarchy) // special case
-        {
-        }
-        else
-        {
-            ui->treeWidget_Jobs->resizeColumnToContents(i);
-        }
+		ui->treeWidget_Jobs->resizeColumnToContents(i);
 	}
+	// ...but make sure first col (jobID) is wide enough
+	ui->treeWidget_Jobs->header()->resizeSection(0, 240);	// Job ID column
+
 }
 
 /*******************************************************************************
@@ -253,7 +250,8 @@ void QstatTab::updateList()
     QMap<QString,QTreeWidgetItem*> heirarchyMap;
 
     // determine if user wants to show tree heirarchy based on the "Queue" field (ie. by "Queue")
-    bool bShowHeirarchy = false;
+	bool bShowJobsByQueue = false;
+
     bool bShowQueued = false;
     bool bShowRunning = false;
     bool bShowCompleted = false;
@@ -261,7 +259,7 @@ void QstatTab::updateList()
     bool bShowSuspended = false;
     bool bExpandAll = false;  // expand all tree heirarchy
     if (ui->checkBox_ShowJobsByQueue->isChecked())
-        bShowHeirarchy = true;
+		bShowJobsByQueue = true;
     if (ui->checkBox_Queued->isChecked())
         bShowQueued = true;
     if (ui->checkBox_Running->isChecked())
@@ -296,28 +294,23 @@ void QstatTab::updateList()
         if (!bAdd)
             continue;
 
-        QTreeWidgetItem* item = NULL;
-        if (bShowHeirarchy)
-        {
-            if (heirarchyMap.contains(job->m_queue))
-            {
-                QTreeWidgetItem* parent = heirarchyMap.value(job->m_queue);
-                item = new QTreeWidgetItem(parent);
-            }
-            else
-            {
-                QTreeWidgetItem* rootitem = new QTreeWidgetItem(ui->treeWidget_Jobs);  // create it at root level
-                rootitem->setText(0, job->m_queue);
-                if (bExpandAll)
-                    rootitem->setExpanded(true);
-                heirarchyMap[job->m_queue] = rootitem;
-                item = new QTreeWidgetItem(rootitem);
-            }
-        }
-        else // else not showing heirarchy, so just do a normal (flat) listing
-        {
-            item = new QTreeWidgetItem(ui->treeWidget_Jobs);
-        }
+		QTreeWidgetItem* item = NULL;
+
+		// first, see if this item is a job array item (i.e, if it's in format "6459[8].dmarsh.ac"), and if
+		// so, create heirarchy beneath job array root
+		QStringList sl = job->m_jobID.split(".");
+		QString sJobID = sl[0];  // jobID is first part (just before first period)
+		QStringList slJobIDParts = sJobID.split("[");  // look for a left square-bracket "[" ..
+		// add a "[]" to the base JobArray string
+		QString sJobArrayStr = slJobIDParts[0] + "[]";
+
+        bool bIsJobArrayItem = false;
+        if (slJobIDParts.count() > 1) // see if it's a job array item
+            bIsJobArrayItem = true;
+        // create a new item and add it to the tree heirarchy
+        item = addHierarchyItem( heirarchyMap, bShowJobsByQueue, job->m_queue, bIsJobArrayItem,
+            sJobArrayStr, bExpandAll );
+
 
         item->setText(0,  job->m_jobID);
         item->setText(1,  job->m_username);
@@ -342,6 +335,77 @@ void QstatTab::updateList()
     }
 
     restoreExpandedState(); // expand any root-level items in Jobs list that previously were expanded
+}
+
+/*******************************************************************************
+ *
+*******************************************************************************/
+QTreeWidgetItem* QstatTab::addHierarchyItem( QMap<QString,QTreeWidgetItem*>& heirarchyMap,
+	bool bShowJobsByQueue, QString queueStr, bool bIsJobArrayItem, QString jobArrayStr, bool bExpandAll )
+{
+	QTreeWidgetItem* newItem = NULL;
+	QTreeWidgetItem* queueParent = NULL;
+
+	if (bShowJobsByQueue)
+	{
+		if (heirarchyMap.contains(queueStr))
+		{
+			queueParent = heirarchyMap.value(queueStr);
+		//	newItem = new QTreeWidgetItem(queueParent);
+		}
+		else
+		{
+			queueParent = new QTreeWidgetItem(ui->treeWidget_Jobs);  // ..create it at root level of tree
+			queueParent->setText(0, queueStr);
+			// attach a 0 to the item (indicates it's NOT a jobID)
+			queueParent->setData(0, Qt::UserRole, QVariant::fromValue(0));
+			if (bExpandAll)
+				queueParent->setExpanded(true);
+			heirarchyMap[queueStr] = queueParent;
+		//	newItem = new QTreeWidgetItem(queueParent);
+		}
+	}
+
+	if (bIsJobArrayItem) // if this is a job array item
+	{
+		QTreeWidgetItem* jobArrayParent = NULL;
+		if (heirarchyMap.contains(jobArrayStr))
+		{
+			jobArrayParent = heirarchyMap.value(jobArrayStr);
+			newItem = new QTreeWidgetItem(jobArrayParent); // create the new item under the job array parent
+			// attach a 1 to the item (indicates it's a jobID)
+			newItem->setData(0, Qt::UserRole, QVariant::fromValue(1));
+		}
+		else
+		{
+			if (bShowJobsByQueue)  // if showing queue heirarchy..
+				jobArrayParent = new QTreeWidgetItem(queueParent);  // create it below the queue parent
+			else
+				jobArrayParent = new QTreeWidgetItem(ui->treeWidget_Jobs);  // create it at root level of tree
+
+			jobArrayParent->setText(0, jobArrayStr);
+			// attach a 0 to the item (indicates it's NOT a jobID)
+			jobArrayParent->setData(0, Qt::UserRole, QVariant::fromValue(0));
+			if (bExpandAll)
+				jobArrayParent->setExpanded(true);
+			heirarchyMap[jobArrayStr] = jobArrayParent;
+			newItem = new QTreeWidgetItem(jobArrayParent);  // create the new item under the job array parent
+			// attach 1 to the item (indicates it's a jobID)
+			newItem->setData(0, Qt::UserRole, QVariant::fromValue(1));
+		}
+	}
+	else // it's not a job array item, so just create a regular item (if bShowJobsByQueue is true, under the queue item)
+	{
+		if (bShowJobsByQueue)
+			newItem = new QTreeWidgetItem(queueParent);
+		else
+			newItem = new QTreeWidgetItem(ui->treeWidget_Jobs);
+
+		// attach 1 to the item (indicates it's a jobID)
+		newItem->setData(0, Qt::UserRole, QVariant::fromValue(1));
+	}
+
+    return newItem;
 }
 
 /*******************************************************************************
@@ -594,6 +658,8 @@ void QstatTab::qstat_R_processStdout() // parse the stdout data collected (above
 	{
 		  ui->treeWidget_Jobs->resizeColumnToContents(i);
 	}
+	// ...but make sure first col (jobID) is wide enough
+	ui->treeWidget_Jobs->header()->resizeSection(0, 240);	// Job ID column
 }
 
 /*******************************************************************************
@@ -1221,8 +1287,15 @@ void QstatTab::on_treeWidget_Jobs_itemSelectionChanged ()
 	QList<QTreeWidgetItem*> selectedItems = ui->treeWidget_Jobs->selectedItems();
 	if ( selectedItems.size() > 0)
 	{
-		ui->treeWidget_JobInfo->clear();
+		ui->treeWidget_JobInfo->clear();  // clear out the qstat -f list
+		ui->label_Title_JobInfo->setText("");  // clear out the qstat -f list's title field
 		QTreeWidgetItem* item = selectedItems[0];	// list is single-select
+
+		// get the "is this a jobID?" flag from item's data -- 0==is NOT a jobID, 1==is a jobID
+		QVariant qv = item->data(0, Qt::UserRole);
+		int iFlag = qv.value<int>();
+		if (iFlag == 0)  // if not a jobID, just clear the list on the right and bail out
+			return;
 
 		QString jobID = item->text(0);  // get text from column 0 (jobID)
 		// NOTE From Ken:  qstat truncates the job name. You cannot use the truncated name to look up a job id.

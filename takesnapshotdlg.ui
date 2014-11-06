@@ -224,7 +224,7 @@
          <string>Save data for each node (uses momctl -d3)*</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -234,7 +234,7 @@
          <string>Save data for each job (uses qstat -f)*</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -244,7 +244,7 @@
          <string>Refresh all lists before taking snapshot</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
