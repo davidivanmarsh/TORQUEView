@@ -25,7 +25,7 @@
 
 #define TORQUEVIEW_MAJOR 1
 #define TORQUEVIEW_MINOR 0
-#define TORQUEVIEW_BUILD 4
+#define TORQUEVIEW_BUILD 5
 
 
 namespace Ui {
