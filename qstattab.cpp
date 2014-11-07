@@ -87,7 +87,7 @@ void QstatTab::CreateContextMenus()
 *******************************************************************************/
 void QstatTab::resetErrorMsgDlg()
 {
-    m_showQStat_R_STDERROutput = true;
+    m_showQStat_a_STDERROutput = true;
     m_showQStat_f_STDERROutput = true;
     m_showRunJobSTDERROutput = true;
     m_showDeleteJobSTDERROutput = true;
@@ -184,7 +184,7 @@ void QstatTab::initQstatFromFile( QTextStream &in )  // init the qstat tab from 
 		if (line.isEmpty())
 			continue;
 
-		// have we gotten to the next section after the qstat -R section?
+		// have we gotten to the next section after the qstat -a section?
 		if (line.startsWith( "#--------" )) // each section will be terminated by a "#-------" string to indicate the start of the next section
 		{
 			break;
@@ -205,23 +205,24 @@ void QstatTab::initQstatFromFile( QTextStream &in )  // init the qstat tab from 
 		{
 			QStringList fields = line.split(" ", QString::SkipEmptyParts);  // split on 'blank' boundaries
 			int count = fields.size();
-			if (count > 11)  // when user specifies "Show Heirarchy by Queue", first line will be just the quene name, i.e, "batch", so ignore it
+			if (count > 10)  // when user specifies "Show Heirarchy by Queue", first line will be just the quene name, i.e, "batch", so ignore it
 			{
 				QString jobID			= fields[0];
 				QString username		= fields[1];
 				QString queue			= fields[2];
-				QString NDS				= fields[3];
-				QString TSK				= fields[4];
-				QString requiredMemory	= fields[5];
-				QString requiredTime	= fields[6];
-				QString state			= fields[7];
-				QString elapsedTime		= fields[8];
-				QString BIG				= fields[9];
-				QString FAST			= fields[10];
-				QString PFS				= fields[11];
+				QString jobname			= fields[3];
+				QString sessID			= fields[4];
+				QString NDS				= fields[5];
+				QString TSK				= fields[6];
+				QString requiredMemory	= fields[7];
+				QString requiredTime	= fields[8];
+				QString state			= fields[9];
+				QString elapsedTime		= fields[10];
+//				QString BIG				= fields[9];
+//				QString FAST			= fields[10];
+//				QString PFS				= fields[11];
 
-
-				PbsJob* job = new PbsJob(jobID, username, queue, NDS, TSK, requiredMemory, requiredTime, state, elapsedTime, BIG, FAST, PFS);
+				PbsJob* job = new PbsJob(jobID, username, queue, jobname, sessID, NDS, TSK, requiredMemory, requiredTime, state, elapsedTime/*, BIG, FAST, PFS*/);
 				m_pbsJobs.append(job);
 			}
 		}
@@ -302,41 +303,44 @@ void QstatTab::updateList()
 		QString sJobID = slWholeID[0];  // jobID is first part (just before first period)
 		QStringList slJobIDParts = sJobID.split("[");  // look for a left square-bracket "[" ..
 		// add a "[]" to the base JobArray string
-		QString sJobArrayStr = slJobIDParts[0] + "[]";
+		QString sJobArray = slJobIDParts[0] + "[]";
 		if (slWholeID.count() > 1)
 		{
-			sJobArrayStr += ".";
-			sJobArrayStr += slWholeID[1]; // tack on server name (e.g., ".dmarsh.ac")
+			sJobArray += ".";
+			sJobArray += slWholeID[1]; // tack on server name (e.g., ".dmarsh.ac")
 		}
 
         bool bIsJobArrayItem = false;
         if (slJobIDParts.count() > 1) // see if it's a job array item
             bIsJobArrayItem = true;
         // create a new item and add it to the tree heirarchy
+        // NOTE: most of the params to addHierarchyItem() are for displaying a jobArray head item
         item = addHierarchyItem( heirarchyMap, bShowJobsByQueue, job->m_queue, bIsJobArrayItem,
-            sJobArrayStr, job->m_username, bExpandAll );
+            sJobArray, job->m_username, job->m_jobname, job->m_sessID, job->m_NDS, job->m_TSK, bExpandAll );
 
 
         item->setText(0,  job->m_jobID);
         item->setText(1,  job->m_username);
         item->setText(2,  job->m_queue);
-        item->setText(3,  job->m_NDS);
-        item->setText(4,  job->m_TSK);
-        item->setText(5,  job->m_requiredMemory);
-        item->setText(6,  job->m_requiredTime);
-        item->setText(7,  job->m_state);
-        item->setText(8,  job->m_elapsedTime);
-        item->setText(9,  job->m_BIG);
-        item->setText(10, job->m_FAST);
-        item->setText(11, job->m_PFS);
+        item->setText(3,  job->m_jobname);
+        item->setText(4,  job->m_sessID);
+        item->setText(5,  job->m_NDS);
+        item->setText(6,  job->m_TSK);
+        item->setText(7,  job->m_requiredMemory);
+        item->setText(8,  job->m_requiredTime);
+        item->setText(9,  job->m_state);
+        item->setText(10, job->m_elapsedTime);
+//      item->setText(9,  job->m_BIG);
+//      item->setText(10, job->m_FAST);
+//      item->setText(11, job->m_PFS);
 
         QString detailedJobState;
         QIcon icon;
         QColor backgroundcolor;
         getJobInfo(job->m_state, detailedJobState, icon, backgroundcolor); 	// get job state enum
         item->setIcon(0, icon);
-        item->setBackgroundColor(7, backgroundcolor);
-        item->setToolTip(7, detailedJobState );
+        item->setBackgroundColor(9, backgroundcolor);
+        item->setToolTip(9, detailedJobState );
     }
 
     restoreExpandedState(); // expand any root-level items in Jobs list that previously were expanded
@@ -347,7 +351,7 @@ void QstatTab::updateList()
 *******************************************************************************/
 QTreeWidgetItem* QstatTab::addHierarchyItem( QMap<QString,QTreeWidgetItem*>& heirarchyMap,
 	bool bShowJobsByQueue, QString sQueue, bool bIsJobArrayItem, QString sJobArray,
-	QString sUsername, bool bExpandAll )
+	QString sUsername, QString sJobname, QString sSessionID, QString sNDS, QString sTSK, bool bExpandAll )
 {
 	QTreeWidgetItem* newItem = NULL;
 	QTreeWidgetItem* queueParent = NULL;
@@ -372,29 +376,37 @@ QTreeWidgetItem* QstatTab::addHierarchyItem( QMap<QString,QTreeWidgetItem*>& hei
 
 	if (bIsJobArrayItem) // if this is a job array item
 	{
-		QTreeWidgetItem* jobArrayParent = NULL;
+		QTreeWidgetItem* jobArrayHeadItem = NULL;
 		if (heirarchyMap.contains(sJobArray))
 		{
-			jobArrayParent = heirarchyMap.value(sJobArray);
-			newItem = new QTreeWidgetItem(jobArrayParent); // create the new item under the job array parent
+			jobArrayHeadItem = heirarchyMap.value(sJobArray);
+			newItem = new QTreeWidgetItem(jobArrayHeadItem); // create the new item under the job array parent
 			// attach a 1 to the item (indicates it's a jobID)
 			newItem->setData(0, Qt::UserRole, QVariant::fromValue(1));
 		}
 		else
 		{
 			if (bShowJobsByQueue)  // if showing queue heirarchy..
-				jobArrayParent = new QTreeWidgetItem(queueParent);  // create it below the queue parent
+				jobArrayHeadItem = new QTreeWidgetItem(queueParent);  // create it below the queue parent
 			else
-				jobArrayParent = new QTreeWidgetItem(ui->treeWidget_Jobs);  // create it at root level of tree
+				jobArrayHeadItem = new QTreeWidgetItem(ui->treeWidget_Jobs);  // create it at root level of tree
 
-			jobArrayParent->setText(0, sJobArray);
-			jobArrayParent->setText(1, sUsername);
+			QStringList slJobname = sJobname.split("-");
+			QString sTruncatedJobname = slJobname[0];  // truncate off the part following the "-" dash char (e.g, "STDIN_11" would become just "STDIN")
+
+			jobArrayHeadItem->setText(0, sJobArray);
+			jobArrayHeadItem->setText(1, sUsername);
+			jobArrayHeadItem->setText(2, sQueue);  // jobs for this jobArray might be split across multiple queues, but this is rare...
+			jobArrayHeadItem->setText(3, sTruncatedJobname);
+			jobArrayHeadItem->setText(4, sSessionID);
+			jobArrayHeadItem->setText(5, sNDS);
+			jobArrayHeadItem->setText(6, sTSK);
 			// attach a 0 to the item (indicates it's NOT a jobID)
-			jobArrayParent->setData(0, Qt::UserRole, QVariant::fromValue(0));
+			jobArrayHeadItem->setData(0, Qt::UserRole, QVariant::fromValue(0));
 			if (bExpandAll)
-				jobArrayParent->setExpanded(true);
-			heirarchyMap[sJobArray] = jobArrayParent;
-			newItem = new QTreeWidgetItem(jobArrayParent);  // create the new item under the job array parent
+				jobArrayHeadItem->setExpanded(true);
+			heirarchyMap[sJobArray] = jobArrayHeadItem;
+			newItem = new QTreeWidgetItem(jobArrayHeadItem);  // create the new item under the job array parent
 			// attach 1 to the item (indicates it's a jobID)
 			newItem->setData(0, Qt::UserRole, QVariant::fromValue(1));
 		}
@@ -502,26 +514,26 @@ void QstatTab::initQstats_f_FromFile( QTextStream &in )
 /*******************************************************************************
  *
 *******************************************************************************/
-bool QstatTab::issueCmd_Qstat_R()  // init the qstat tab from cmdline "qstat -R" command
+bool QstatTab::issueCmd_Qstat_a()  // init the qstat tab from cmdline "qstat -a" command
 {
 	// re-init all GUI widgets
 	ui->treeWidget_Jobs->clear();	// clear out list
 //  ui->treeWidget_JobInfo->clear();	// clear out list
 
-	m_qstat_R_Stdout.clear();
-	m_qstat_R_Stderr.clear();
+	m_qstat_a_Stdout.clear();
+	m_qstat_a_Stderr.clear();
 	m_pbsJobs.clear();
 
 	QString qstatCommand;
 	if (m_mainWindow->m_Config_Call_Qstat_with_T_Flag)  // the "qstat -t" flag is for supporting job arrays
 	{
-		// do a "qstat -R' as the default display here, using the "-t" flag (supports job arrays)
-		qstatCommand = m_mainWindow->m_Config_Cmd_Qstat_R_with_T;
+		// do a "qstat -a' as the default display here, using the "-t" flag (supports job arrays)
+		qstatCommand = m_mainWindow->m_Config_Cmd_Qstat_a_with_T;
 	}
 	else
 	{
-		// do a "qstat -R' as the default display here, but without the "-t" flag
-		qstatCommand = m_mainWindow->m_Config_Cmd_Qstat_R_without_T;
+		// do a "qstat -a' as the default display here, but without the "-t" flag
+		qstatCommand = m_mainWindow->m_Config_Cmd_Qstat_a_without_T;
 	}
 
 
@@ -529,47 +541,47 @@ bool QstatTab::issueCmd_Qstat_R()  // init the qstat tab from cmdline "qstat -R"
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
 
-	m_qstat_R_Process = new QProcess(this);
-	connect (m_qstat_R_Process, SIGNAL(readyReadStandardOutput()),
-			 this, SLOT(qstat_R_getStdout())); // connect process signals with code
-	connect (m_qstat_R_Process, SIGNAL(readyReadStandardError()),
-			 this, SLOT(qstat_R_getStderr())); // same here
-	m_qstat_R_Process->start(qstatCommand);
+	m_qstat_a_Process = new QProcess(this);
+	connect (m_qstat_a_Process, SIGNAL(readyReadStandardOutput()),
+			 this, SLOT(qstat_a_getStdout())); // connect process signals with code
+	connect (m_qstat_a_Process, SIGNAL(readyReadStandardError()),
+			 this, SLOT(qstat_a_getStderr())); // same here
+	m_qstat_a_Process->start(qstatCommand);
 
-	if (!m_qstat_R_Process->waitForStarted())
+	if (!m_qstat_a_Process->waitForStarted())
 	{
 		QApplication::restoreOverrideCursor();
-		QMessageBox::critical(0, "Couldn't start 'qstat -R' process", "'qstat -R' process unable to start.  Torque is probably not running.\n");
+		QMessageBox::critical(0, "Couldn't start 'qstat -a' process", "'qstat -a' process unable to start.  Torque is probably not running.\n");
 		return false;
 	}
 
-	if (!m_qstat_R_Process->waitForFinished(-1)) //If msecs is -1, this function will not time out
+	if (!m_qstat_a_Process->waitForFinished(-1)) //If msecs is -1, this function will not time out
 	{
 		QApplication::restoreOverrideCursor();
 		QMessageBox::critical(0, "Error trying to complete qstat process", "Process's waitForFinished() method returned error.\n");
 		return false;
 	}
 
-	delete m_qstat_R_Process;
-	m_qstat_R_Process = NULL;
+	delete m_qstat_a_Process;
+	m_qstat_a_Process = NULL;
 
 
-	qstat_R_processStdout(); // parse the stdout data collected (above)
+	qstat_a_processStdout(); // parse the stdout data collected (above)
 
 	// restore the original cursor
 	QApplication::restoreOverrideCursor();
 
 
-    if (m_showQStat_R_STDERROutput)
+	if (m_showQStat_a_STDERROutput)
 	{
-		if (!m_qstat_R_Stderr.isEmpty())
+		if (!m_qstat_a_Stderr.isEmpty())
 		{
-//			QMessageBox::critical(0, "Error issuing 'qstat -R' command",
-//								  QString("Error issuing 'qstat -R' command.  Error message was: %1").arg(m_qstat_R_Stderr));
-            ErrorMsgDlg dlg("TORQUEView Error", "Error issuing 'qstat -R' command. Error message:", m_qstat_R_Stderr);
+//			QMessageBox::critical(0, "Error issuing 'qstat -a' command",
+//								  QString("Error issuing 'qstat -a' command.  Error message was: %1").arg(m_qstat_a_Stderr));
+            ErrorMsgDlg dlg("TORQUEView Error", "Error issuing 'qstat -a' command. Error message:", m_qstat_a_Stderr);
             dlg.exec();
             if (dlg.isDontShowThisAgainChecked())  // see if the "Don't show this dialog again" checkbox was checked
-                m_showQStat_R_STDERROutput = false;
+                m_showQStat_a_STDERROutput = false;
             m_lastJobIdSelected = ""; // re-init
 			return false;
 		}
@@ -582,13 +594,13 @@ bool QstatTab::issueCmd_Qstat_R()  // init the qstat tab from cmdline "qstat -R"
  *
 *******************************************************************************/
 // called from issueQstatCmd() - this gets called whenever the qstat process has something to say...
-void QstatTab::qstat_R_getStdout()
+void QstatTab::qstat_a_getStdout()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	if (m_qstat_R_Process != NULL)
+	if (m_qstat_a_Process != NULL)
 	{
-		QByteArray s = m_qstat_R_Process->readAllStandardOutput(); // read normal output
-		m_qstat_R_Stdout.append( s );  // if there's any stdout
+		QByteArray s = m_qstat_a_Process->readAllStandardOutput(); // read normal output
+		m_qstat_a_Stdout.append( s );  // if there's any stdout
 	}
 }
 
@@ -596,13 +608,13 @@ void QstatTab::qstat_R_getStdout()
  *
 *******************************************************************************/
 // called from issueQstatCmd() - this gets called whenever the qstat process has something to say...
-void QstatTab::qstat_R_getStderr()
+void QstatTab::qstat_a_getStderr()
 {
 	// this method is called asynchronously whenever more data arrives and needs to be processed
-	if (m_qstat_R_Process != NULL)
+	if (m_qstat_a_Process != NULL)
 	{
-		QByteArray s = m_qstat_R_Process->readAllStandardError(); // read error channel
-		m_qstat_R_Stderr.append( s );  // if there's any stderr
+		QByteArray s = m_qstat_a_Process->readAllStandardError(); // read error channel
+		m_qstat_a_Stderr.append( s );  // if there's any stderr
 	}
 }
 
@@ -610,7 +622,7 @@ void QstatTab::qstat_R_getStderr()
 /*******************************************************************************
  *
 *******************************************************************************/
-void QstatTab::qstat_R_processStdout() // parse the stdout data collected (above)
+void QstatTab::qstat_a_processStdout() // parse the stdout data collected (above)
 {
     m_pbsJobs.clear();
 
@@ -621,7 +633,7 @@ void QstatTab::qstat_R_processStdout() // parse the stdout data collected (above
 
 	bool bNodeNameSeen = false;
 
-	QStringList lines = m_qstat_R_Stdout.split("\n");
+	QStringList lines = m_qstat_a_Stdout.split("\n");
 	foreach (QString line, lines)
 	{
 		line = line.trimmed(); // strip off leading and trailing spaces
@@ -646,18 +658,20 @@ void QstatTab::qstat_R_processStdout() // parse the stdout data collected (above
 			QString jobID			= fields[0];
 			QString username		= fields[1];
 			QString queue			= fields[2];
-			QString NDS				= fields[3];
-			QString TSK				= fields[4];
-			QString requiredMemory	= fields[5];
-			QString requiredTime	= fields[6];
-			QString state			= fields[7];
-			QString elapsedTime		= fields[8];
-			QString BIG				= fields[9];
-			QString FAST			= fields[10];
-			QString PFS				= fields[11];
+			QString jobname			= fields[3];
+			QString sessID			= fields[4];
+			QString NDS				= fields[5];
+			QString TSK				= fields[6];
+			QString requiredMemory	= fields[7];
+			QString requiredTime	= fields[8];
+			QString state			= fields[9];
+			QString elapsedTime		= fields[10];
+//			QString BIG				= fields[9];
+//			QString FAST			= fields[10];
+//			QString PFS				= fields[11];
 
 
-			PbsJob* job = new PbsJob(jobID, username, queue, NDS, TSK, requiredMemory, requiredTime, state, elapsedTime, BIG, FAST, PFS);
+			PbsJob* job = new PbsJob(jobID, username, queue, jobname, sessID, NDS, TSK, requiredMemory, requiredTime, state, elapsedTime/*, BIG, FAST, PFS*/);
 			m_pbsJobs.append(job);
 		}
 
@@ -860,12 +874,12 @@ bool QstatTab::issueCmd_Qstat_f( QString jobID )
 	QString qstat_f_Command;
 	if (m_mainWindow->m_Config_Call_Qstat_with_T_Flag)  // the "qstat -t" flag is for supporting job arrays
 	{
-		// do a "qstat -R' as the default display here, using the "-t" flag (supports job arrays)
+		// do a "qstat -f' as the default display here, using the "-t" flag (supports job arrays)
 		qstat_f_Command = qstat_f_Command = QString (m_mainWindow->m_Config_Cmd_Qstat_f_with_T).arg(jobID);
 	}
 	else
 	{
-		// do a "qstat -R' as the default display here, but without the "-t" flag
+		// do a "qstat -f' as the default display here, but without the "-t" flag
 		qstat_f_Command = qstat_f_Command = QString (m_mainWindow->m_Config_Cmd_Qstat_f_without_T).arg(jobID);
 	}
 
@@ -1188,7 +1202,7 @@ void QstatTab::writeDataToFile(QTextStream& out)
 	out << "\n";
 	out << "\n";
 	out << "#---------------------------------------------------------------" << "\n";
-	out << "TORQUEView -- Qstat -R Output" << "\n";
+	out << "TORQUEView -- Qstat -a Output" << "\n";
 	out << "#---------------------------------------------------------------" << "\n";
 	out << "\n";
 	out << "\n";
@@ -1497,7 +1511,7 @@ void QstatTab::on_actionRun_job_triggered()
         issueCmd_RunJob( jobID );
     }
 
-    issueCmd_Qstat_R();	// refresh qstat list
+    issueCmd_Qstat_a();	// refresh qstat list
 
 }
 
@@ -1515,7 +1529,7 @@ void QstatTab::on_actionDelete_job_triggered()
         issueCmd_DeleteJob( jobID );
     }
 
-    issueCmd_Qstat_R();	// refresh qstat list
+    issueCmd_Qstat_a();	// refresh qstat list
 }
 
 /*******************************************************************************
@@ -1532,7 +1546,7 @@ void QstatTab::on_actionPut_job_on_hold_triggered()
         issueCmd_HoldJob( jobID );
     }
 
-    issueCmd_Qstat_R();	// refresh qstat list
+    issueCmd_Qstat_a();	// refresh qstat list
 }
 
 /*******************************************************************************
@@ -1549,7 +1563,7 @@ void QstatTab::on_actionRelease_hold_on_job_triggered()
         issueCmd_ReleaseHoldOnJob( jobID );
     }
 
-    issueCmd_Qstat_R();	// refresh qstat list
+    issueCmd_Qstat_a();	// refresh qstat list
 }
 
 /*******************************************************************************
@@ -1566,7 +1580,7 @@ void QstatTab::on_actionRerun_job_triggered()
         issueCmd_RerunJob( jobID );
     }
 
-    issueCmd_Qstat_R();	// refresh qstat list
+    issueCmd_Qstat_a();	// refresh qstat list
 
 }
 

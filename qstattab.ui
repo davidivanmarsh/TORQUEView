@@ -77,6 +77,16 @@
          </column>
          <column>
           <property name="text">
+           <string>Job Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Session ID</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>NDS</string>
           </property>
          </column>
@@ -103,21 +113,6 @@
          <column>
           <property name="text">
            <string>Elapsed Time</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>BIG</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>FAST</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>PFS</string>
           </property>
          </column>
         </widget>

@@ -74,8 +74,8 @@ public:
 
 	QString SETTINGS_CMD_Pbsnodes;
 	QString SETTINGS_CMD_Momctl_d3;
-	QString SETTINGS_CMD_Qstat_R_with_T;	// the "-t" option lets TORQUEView access job arrays
-	QString SETTINGS_CMD_Qstat_R_without_T;
+	QString SETTINGS_CMD_Qstat_a_with_T;	// the "-t" option lets TORQUEView access job arrays
+	QString SETTINGS_CMD_Qstat_a_without_T;
 	QString SETTINGS_CMD_Qstat_f_with_T;	// the "-t" option lets TORQUEView access job arrays
 	QString SETTINGS_CMD_Qstat_f_without_T;
 	QString SETTINGS_CMD_Qmgr_c;
@@ -144,8 +144,8 @@ public:
 	// Config dlg settings
 	QString m_Config_Cmd_Pbsnodes;
 	QString m_Config_Cmd_Momctl_d3;
-	QString m_Config_Cmd_Qstat_R_with_T;
-	QString m_Config_Cmd_Qstat_R_without_T;
+	QString m_Config_Cmd_Qstat_a_with_T;
+	QString m_Config_Cmd_Qstat_a_without_T;
 	QString m_Config_Cmd_Qstat_f_with_T;
 	QString m_Config_Cmd_Qstat_f_without_T;
 	bool    m_Config_Call_Qstat_with_T_Flag;

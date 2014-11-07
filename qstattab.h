@@ -41,29 +41,33 @@ public:
 	QStringList m_data;
 };
 
-class PbsJob // "qstat -R" row item structure
+class PbsJob // "qstat -a" row item structure
 {
 public:
-	PbsJob(QString jobID, QString username, QString queue, QString NDS, QString TSK, QString requiredMemory,
-			QString requiredTime, QString state, QString elapsedTime, QString BIG, QString FAST, QString PFS)
+	PbsJob(QString jobID, QString username, QString queue, QString jobname, QString sessID, QString NDS, QString TSK, QString requiredMemory,
+			QString requiredTime, QString state, QString elapsedTime/*, QString BIG, QString FAST, QString PFS*/)
 		: m_jobID(jobID)
 		, m_username(username)
 		, m_queue(queue)
+		, m_jobname(jobname)
+		, m_sessID(sessID)
 		, m_NDS(NDS)
 		, m_TSK(TSK)
 		, m_requiredMemory(requiredMemory)
 		, m_requiredTime(requiredTime)
 		, m_state(state)
 		, m_elapsedTime(elapsedTime)
-		, m_BIG(BIG)
-		, m_FAST(FAST)
-		, m_PFS(PFS)
+//		, m_BIG(BIG)
+//		, m_FAST(FAST)
+//		, m_PFS(PFS)
 	{
 	}
 
 	QString m_jobID;
 	QString m_username;
 	QString m_queue;
+	QString m_jobname;
+	QString m_sessID;
 	QString m_NDS;
 	QString m_TSK;
 	QString m_requiredMemory;
@@ -90,7 +94,7 @@ public:
 	void clearLists();
 	void getExpandedState();
     void resetErrorMsgDlg();
-	bool issueCmd_Qstat_R();
+    bool issueCmd_Qstat_a();
 	void initQstatFromFile( QTextStream &in );
 	void initQstats_f_FromFile( QTextStream &in );
 	void writeDataToFile(QTextStream& out);
@@ -114,9 +118,9 @@ public:
 	QString getLastJobIdSelected();
 
 private slots:
-	void qstat_R_getStdout();
-	void qstat_R_getStderr();
-	void qstat_R_processStdout();
+	void qstat_a_getStdout();
+	void qstat_a_getStderr();
+	void qstat_a_processStdout();
 
 	void qstat_f_getStdout();
 	void qstat_f_getStderr();
@@ -170,7 +174,7 @@ private:
 	QString m_lastExecHost;
 	QString m_lastExecPort;
 
-    bool m_showQStat_R_STDERROutput;
+    bool m_showQStat_a_STDERROutput;
     bool m_showQStat_f_STDERROutput;
     bool m_showRunJobSTDERROutput;
     bool m_showDeleteJobSTDERROutput;
@@ -178,7 +182,7 @@ private:
     bool m_showReleaseHoldOnJobSTDERROutput;
     bool m_showRerunJobSTDERROutput;
 
-	QProcess* m_qstat_R_Process;
+	QProcess* m_qstat_a_Process;
 	QProcess* m_qstat_f_Process;
 	QProcess* m_runJobProcess;
 	QProcess* m_deleteJobProcess;
@@ -186,8 +190,8 @@ private:
 	QProcess* m_releaseHoldOnJobProcess;
 	QProcess* m_rerunJobProcess;
 
-	QString m_qstat_R_Stdout;
-	QString m_qstat_R_Stderr;
+	QString m_qstat_a_Stdout;
+	QString m_qstat_a_Stderr;
 	QString m_qstat_f_Stdout;
 	QString m_qstat_f_Stderr;
 
@@ -203,7 +207,7 @@ private:
 	QString m_rerunJob_Stderr;
 
 	QStringList m_jobInfo_Lines;  // used when taking a snapshot and writing out qstat -f (i.e, jobInfo) lines
-	QMap<QString, JobInfo*> m_jobInfoMap;  // used when reading in a combined qstat_R/qstat_f data text file, and when updating the JobInfo treewidget
+	QMap<QString, JobInfo*> m_jobInfoMap;  // used when reading in a combined qstat_a/qstat_f data text file, and when updating the JobInfo treewidget
 	QMap<QString, bool> m_expandedMap;  // used to determine each item's "expanded"/"not expanded" state (in the job list)
 
 	void CreateContextMenus();
@@ -212,7 +216,7 @@ private:
 	void updateList();
 	QTreeWidgetItem* addHierarchyItem( QMap<QString,QTreeWidgetItem*>& heirarchyMap,
 		bool bShowJobsByQueue, QString sQueue, bool bIsJobArrayItem, QString sJobArray,
-		QString sUsername, bool bExpandAll );
+		QString sUsername, QString sJobname, QString sSessionID, QString sNDS, QString sTSK, bool bExpandAll );
 
 	void restoreExpandedState(); // expand any root-level items in Jobs list that previously were expanded
 

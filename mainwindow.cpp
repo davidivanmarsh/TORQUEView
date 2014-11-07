@@ -108,8 +108,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	SETTINGS_CMD_Pbsnodes = "pbsnodes";
 	SETTINGS_CMD_Momctl_d3 = "momctl -d3 -h %1 -p %2";
-	SETTINGS_CMD_Qstat_R_with_T		= "qstat -R -t";	// the "-t" option lets TORQUEView access job arrays
-	SETTINGS_CMD_Qstat_R_without_T	= "qstat -R";
+	SETTINGS_CMD_Qstat_a_with_T		= "qstat -a -t";	// the "-t" option lets TORQUEView access job arrays
+	SETTINGS_CMD_Qstat_a_without_T	= "qstat -a";
 	SETTINGS_CMD_Qstat_f_with_T		= "qstat -f -t %1";	// the "-t" option lets TORQUEView access job arrays
 	SETTINGS_CMD_Qstat_f_without_T	= "qstat -f %1";
 	SETTINGS_CMD_Qmgr_c = "qmgr -c %1";
@@ -610,8 +610,8 @@ void MainWindow::getConfigCmds()
     {
         m_Config_Cmd_Pbsnodes = SETTINGS_CMD_Pbsnodes;
         m_Config_Cmd_Momctl_d3 = SETTINGS_CMD_Momctl_d3;
-        m_Config_Cmd_Qstat_R_with_T     = SETTINGS_CMD_Qstat_R_with_T;
-        m_Config_Cmd_Qstat_R_without_T  = SETTINGS_CMD_Qstat_R_without_T;
+        m_Config_Cmd_Qstat_a_with_T     = SETTINGS_CMD_Qstat_a_with_T;
+        m_Config_Cmd_Qstat_a_without_T  = SETTINGS_CMD_Qstat_a_without_T;
         m_Config_Cmd_Qstat_f_with_T     = SETTINGS_CMD_Qstat_f_with_T;
         m_Config_Cmd_Qstat_f_without_T  = SETTINGS_CMD_Qstat_f_without_T;
         m_Config_Cmd_Qmgr_c = SETTINGS_CMD_Qmgr_c;
@@ -659,8 +659,8 @@ void MainWindow::getConfigCmds()
     {
         m_Config_Cmd_Pbsnodes = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Pbsnodes);
         m_Config_Cmd_Momctl_d3 = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Momctl_d3);
-        m_Config_Cmd_Qstat_R_with_T = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R_with_T);
-        m_Config_Cmd_Qstat_R_without_T = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R_without_T);
+        m_Config_Cmd_Qstat_a_with_T = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_a_with_T);
+        m_Config_Cmd_Qstat_a_without_T = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_a_without_T);
         m_Config_Cmd_Qstat_f_with_T     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f_with_T);
         m_Config_Cmd_Qstat_f_without_T  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f_without_T);
         m_Config_Cmd_Qmgr_c = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qmgr_c);
@@ -717,8 +717,8 @@ void MainWindow::setConfigCmds()
     {
         m_Config_Cmd_Pbsnodes      = SETTINGS_CMD_Pbsnodes;
 		m_Config_Cmd_Momctl_d3     = SETTINGS_CMD_Momctl_d3;
-		m_Config_Cmd_Qstat_R_with_T    = SETTINGS_CMD_Qstat_R_with_T;
-		m_Config_Cmd_Qstat_R_without_T = SETTINGS_CMD_Qstat_R_without_T;
+		m_Config_Cmd_Qstat_a_with_T    = SETTINGS_CMD_Qstat_a_with_T;
+		m_Config_Cmd_Qstat_a_without_T = SETTINGS_CMD_Qstat_a_without_T;
 		m_Config_Cmd_Qstat_f_with_T    = SETTINGS_CMD_Qstat_f_with_T;
 		m_Config_Cmd_Qstat_f_without_T = SETTINGS_CMD_Qstat_f_without_T;
 		m_Config_Cmd_Qmgr_c        = SETTINGS_CMD_Qmgr_c;
@@ -766,8 +766,8 @@ void MainWindow::setConfigCmds()
 	{
 		m_Config_Cmd_Pbsnodes      = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Pbsnodes);
 		m_Config_Cmd_Momctl_d3     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Momctl_d3);
-		m_Config_Cmd_Qstat_R_with_T		= QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R_with_T);
-		m_Config_Cmd_Qstat_R_without_T  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R_without_T);
+		m_Config_Cmd_Qstat_a_with_T		= QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_a_with_T);
+		m_Config_Cmd_Qstat_a_without_T  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_a_without_T);
 		m_Config_Cmd_Qstat_f_with_T     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f_with_T);
 		m_Config_Cmd_Qstat_f_without_T  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f_without_T);
 		m_Config_Cmd_Qmgr_c        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qmgr_c);
@@ -985,7 +985,7 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 		if (bStatus)
 			bStatus = m_heatMapTab->updateLists();  // also use the data in m_pbsNodesTab to update the heat map
 		if (bStatus)
-			bStatus = m_qstatTab->issueCmd_Qstat_R();	// re-init the qstat lists from the cmdline "qstat" command
+			bStatus = m_qstatTab->issueCmd_Qstat_a();	// re-init the qstat lists from the cmdline "qstat" command
 		if (bStatus)
 			bStatus = m_qstatTab->selectLastJobId();  // select last JobId in the Job list (to populate the other qstat lists)
 		if (bStatus)
@@ -1086,9 +1086,9 @@ void MainWindow::initAllTabs(bool bIncludeQmgr)
 					line = in.readLine(); // read in next line and discard -- it's the "#------" line
 					m_pbsNodesTab->initMomctlsFromFile(in);
 				}
-				else if (line.startsWith("TORQUEView -- Qstat -R Output"))
+				else if (line.startsWith("TORQUEView -- Qstat -a Output"))
 				{
-					// read in all "qstat -R" output lines from file
+					// read in all "qstat -a" output lines from file
 					line = in.readLine(); // read in next line and discard -- it's the "#------" line
 					m_qstatTab->initQstatFromFile(in);
 				}

@@ -142,11 +142,11 @@ void ConfigDlg::updateCommandListWithLocal()
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
     item->setText(0, QString("Show job info for all jobs (with \"qstat -t\" job array flag)"));
-    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_R_with_T);
+    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_a_with_T);
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
     item->setText(0, QString("Show job info for all jobs (without \"qstat -t\" job array flag)"));
-    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_R_without_T);
+    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_a_without_T);
 
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
@@ -315,11 +315,11 @@ void ConfigDlg::updateCommandListWithRemote( QString remoteServer )  // with rem
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
     item->setText(0, QString("Show job info for all jobs (with \"qstat -t\" job array flag)"));
-    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_R_with_T));
+    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_a_with_T));
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
     item->setText(0, QString("Show job info for all jobs (without \"qstat -t\" job array flag)"));
-    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_R_without_T));
+    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_a_without_T));
 
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
