@@ -108,8 +108,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	SETTINGS_CMD_Pbsnodes = "pbsnodes";
 	SETTINGS_CMD_Momctl_d3 = "momctl -d3 -h %1 -p %2";
-	SETTINGS_CMD_Qstat_R = "qstat -R -t";
-	SETTINGS_CMD_Qstat_f = "qstat -f -t %1";  // the "-t" option lets TORQUEView access job arrays
+	SETTINGS_CMD_Qstat_R_with_T		= "qstat -R -t";	// the "-t" option lets TORQUEView access job arrays
+	SETTINGS_CMD_Qstat_R_without_T	= "qstat -R";
+	SETTINGS_CMD_Qstat_f_with_T		= "qstat -f -t %1";	// the "-t" option lets TORQUEView access job arrays
+	SETTINGS_CMD_Qstat_f_without_T	= "qstat -f %1";
 	SETTINGS_CMD_Qmgr_c = "qmgr -c %1";
 	// start MOM
 	SETTINGS_CMD_StartMOM_HeadNode_Standard		= "pbs_mom";
@@ -575,7 +577,7 @@ void MainWindow::readSettings()
 	m_Config_RemoteServerList = settings.value( "RemoteServerList" ).toStringList( );
 	m_Config_UsingMultiMoms = settings.value( "UsingMultiMoms", false ).toBool( );
 	m_Config_UseServiceToStartStopMOMs = settings.value( "UseServiceToStartStopMOMs", false ).toBool( );
-//	m_Config_ShowSTDERROutput = settings.value( "ShowSTDERROutput", true ).toBool( );
+	m_Config_Call_Qstat_with_T_Flag = settings.value( "CallQstatWithTFlag", true ).toBool( );
 
 	// (cleanup RemoteServer list -- sometimes has just a single item that is blank)
 	int nCount = m_Config_RemoteServerList.count();
@@ -608,8 +610,10 @@ void MainWindow::getConfigCmds()
     {
         m_Config_Cmd_Pbsnodes = SETTINGS_CMD_Pbsnodes;
         m_Config_Cmd_Momctl_d3 = SETTINGS_CMD_Momctl_d3;
-        m_Config_Cmd_Qstat_R = SETTINGS_CMD_Qstat_R;
-        m_Config_Cmd_Qstat_f = SETTINGS_CMD_Qstat_f;
+        m_Config_Cmd_Qstat_R_with_T     = SETTINGS_CMD_Qstat_R_with_T;
+        m_Config_Cmd_Qstat_R_without_T  = SETTINGS_CMD_Qstat_R_without_T;
+        m_Config_Cmd_Qstat_f_with_T     = SETTINGS_CMD_Qstat_f_with_T;
+        m_Config_Cmd_Qstat_f_without_T  = SETTINGS_CMD_Qstat_f_without_T;
         m_Config_Cmd_Qmgr_c = SETTINGS_CMD_Qmgr_c;
 
         m_Config_Cmd_StartMOM_HeadNode_Standard     = SETTINGS_CMD_StartMOM_HeadNode_Standard;
@@ -655,8 +659,10 @@ void MainWindow::getConfigCmds()
     {
         m_Config_Cmd_Pbsnodes = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Pbsnodes);
         m_Config_Cmd_Momctl_d3 = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Momctl_d3);
-        m_Config_Cmd_Qstat_R = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R);
-        m_Config_Cmd_Qstat_f = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f);
+        m_Config_Cmd_Qstat_R_with_T = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R_with_T);
+        m_Config_Cmd_Qstat_R_without_T = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R_without_T);
+        m_Config_Cmd_Qstat_f_with_T     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f_with_T);
+        m_Config_Cmd_Qstat_f_without_T  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f_without_T);
         m_Config_Cmd_Qmgr_c = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qmgr_c);
 
         m_Config_Cmd_StartMOM_HeadNode_Standard     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StartMOM_HeadNode_Standard);
@@ -711,8 +717,10 @@ void MainWindow::setConfigCmds()
     {
         m_Config_Cmd_Pbsnodes      = SETTINGS_CMD_Pbsnodes;
 		m_Config_Cmd_Momctl_d3     = SETTINGS_CMD_Momctl_d3;
-		m_Config_Cmd_Qstat_R       = SETTINGS_CMD_Qstat_R;
-		m_Config_Cmd_Qstat_f       = SETTINGS_CMD_Qstat_f;
+		m_Config_Cmd_Qstat_R_with_T    = SETTINGS_CMD_Qstat_R_with_T;
+		m_Config_Cmd_Qstat_R_without_T = SETTINGS_CMD_Qstat_R_without_T;
+		m_Config_Cmd_Qstat_f_with_T    = SETTINGS_CMD_Qstat_f_with_T;
+		m_Config_Cmd_Qstat_f_without_T = SETTINGS_CMD_Qstat_f_without_T;
 		m_Config_Cmd_Qmgr_c        = SETTINGS_CMD_Qmgr_c;
 
 		m_Config_Cmd_StartMOM_HeadNode_Standard     = SETTINGS_CMD_StartMOM_HeadNode_Standard;
@@ -758,8 +766,10 @@ void MainWindow::setConfigCmds()
 	{
 		m_Config_Cmd_Pbsnodes      = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Pbsnodes);
 		m_Config_Cmd_Momctl_d3     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Momctl_d3);
-		m_Config_Cmd_Qstat_R       = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R);
-		m_Config_Cmd_Qstat_f       = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f);
+		m_Config_Cmd_Qstat_R_with_T		= QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R_with_T);
+		m_Config_Cmd_Qstat_R_without_T  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_R_without_T);
+		m_Config_Cmd_Qstat_f_with_T     = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f_with_T);
+		m_Config_Cmd_Qstat_f_without_T  = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qstat_f_without_T);
 		m_Config_Cmd_Qmgr_c        = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_Qmgr_c);
 
 		m_Config_Cmd_StartMOM_HeadNode_Standard      = QString("ssh -o BatchMode=yes %1 \"%2").arg(m_Config_RemoteServer).arg(SETTINGS_CMD_StartMOM_HeadNode_Standard);
@@ -1561,6 +1571,7 @@ void MainWindow::on_actionConfiguration_triggered()
 		mysettings.setValue( "DataSource", m_Config_DataSource );
 		mysettings.setValue( "UsingMultiMoms", m_Config_UsingMultiMoms );
 		mysettings.setValue( "UseServiceToStartStopMOMs", m_Config_UseServiceToStartStopMOMs );
+		mysettings.setValue( "CallQstatWithTFlag", m_Config_Call_Qstat_with_T_Flag );
 
         initAllTabs(true); // include qmgr
     }

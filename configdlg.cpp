@@ -115,7 +115,7 @@ void ConfigDlg::init()
 
 	ui->checkBox_UsingMultiMoms->setChecked( m_mainWindow->m_Config_UsingMultiMoms );
 	ui->checkBox_UseServiceToStartStopMOMs->setChecked( m_mainWindow->m_Config_UseServiceToStartStopMOMs );
-//	ui->checkBox_ShowSTDERROutput->setChecked( m_mainWindow->m_Config_ShowSTDERROutput );
+	ui->checkBox_Call_Qstat_With_T_Flag->setChecked( m_mainWindow->m_Config_Call_Qstat_with_T_Flag );
 
 //	ui->spinBox_RowCount->setValue( m_mainWindow->m_Config_HeatMapRowCount );
 //	ui->spinBox_RowHeight->setValue( m_mainWindow->m_Config_HeatMapRowHeight );
@@ -139,13 +139,24 @@ void ConfigDlg::updateCommandListWithLocal()
     item->setText(0, QString("Show MOM diagnostics below level 2"));
     item->setText(1, m_mainWindow->SETTINGS_CMD_Momctl_d3);
 
-    item = new QTreeWidgetItem(ui->treeWidget_Commands);
-    item->setText(0, QString("Show job info for all jobs"));
-    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_R);
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
-    item->setText(0, QString("Show detailed job info"));
-    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_f);
+    item->setText(0, QString("Show job info for all jobs (with \"qstat -t\" job array flag)"));
+    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_R_with_T);
+
+    item = new QTreeWidgetItem(ui->treeWidget_Commands);
+    item->setText(0, QString("Show job info for all jobs (without \"qstat -t\" job array flag)"));
+    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_R_without_T);
+
+
+    item = new QTreeWidgetItem(ui->treeWidget_Commands);
+    item->setText(0, QString("Show detailed job info (with \"qstat -t\" job array flag)"));
+    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_f_with_T);
+
+    item = new QTreeWidgetItem(ui->treeWidget_Commands);
+    item->setText(0, QString("Show detailed job info (without \"qstat -t\" job array flag)"));
+    item->setText(1, m_mainWindow->SETTINGS_CMD_Qstat_f_without_T);
+
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
     item->setText(0, QString("PBS Queue Manager interface"));
@@ -301,13 +312,24 @@ void ConfigDlg::updateCommandListWithRemote( QString remoteServer )  // with rem
     item->setText(0, QString("Show MOM diagnostics below level 2"));
     item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Momctl_d3));
 
-    item = new QTreeWidgetItem(ui->treeWidget_Commands);
-    item->setText(0, QString("Show job info for all jobs"));
-    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_R));
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
-    item->setText(0, QString("Show detailed job info"));
-    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_f));
+    item->setText(0, QString("Show job info for all jobs (with \"qstat -t\" job array flag)"));
+    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_R_with_T));
+
+    item = new QTreeWidgetItem(ui->treeWidget_Commands);
+    item->setText(0, QString("Show job info for all jobs (without \"qstat -t\" job array flag)"));
+    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2\"").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_R_without_T));
+
+
+    item = new QTreeWidgetItem(ui->treeWidget_Commands);
+    item->setText(0, QString("Show detailed job info (with \"qstat -t\" job array flag)"));
+    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_f_with_T));
+
+    item = new QTreeWidgetItem(ui->treeWidget_Commands);
+    item->setText(0, QString("Show detailed job info (without \"qstat -t\" job array flag)"));
+    item->setText(1, QString("ssh -o BatchMode=yes %1 \"%2").arg(remoteServer).arg(m_mainWindow->SETTINGS_CMD_Qstat_f_without_T));
+
 
     item = new QTreeWidgetItem(ui->treeWidget_Commands);
     item->setText(0, QString("PBS Queue Manager interface"));
@@ -529,6 +551,7 @@ void ConfigDlg::done( int result )
 		m_mainWindow->m_Config_RemoteServer = ui->comboBox_Remote_Server->currentText();
 		m_mainWindow->m_Config_UsingMultiMoms = ui->checkBox_UsingMultiMoms->isChecked();
 		m_mainWindow->m_Config_UseServiceToStartStopMOMs = ui->checkBox_UseServiceToStartStopMOMs->isChecked();
+		m_mainWindow->m_Config_Call_Qstat_with_T_Flag = ui->checkBox_Call_Qstat_With_T_Flag->isChecked();
 	}
 	QDialog::done( result );
 }

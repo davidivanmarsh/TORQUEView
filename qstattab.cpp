@@ -298,18 +298,23 @@ void QstatTab::updateList()
 
 		// first, see if this item is a job array item (i.e, if it's in format "6459[8].dmarsh.ac"), and if
 		// so, create heirarchy beneath job array root
-		QStringList sl = job->m_jobID.split(".");
-		QString sJobID = sl[0];  // jobID is first part (just before first period)
+		QStringList slWholeID = job->m_jobID.split(".");
+		QString sJobID = slWholeID[0];  // jobID is first part (just before first period)
 		QStringList slJobIDParts = sJobID.split("[");  // look for a left square-bracket "[" ..
 		// add a "[]" to the base JobArray string
 		QString sJobArrayStr = slJobIDParts[0] + "[]";
+		if (slWholeID.count() > 1)
+		{
+			sJobArrayStr += ".";
+			sJobArrayStr += slWholeID[1]; // tack on server name (e.g., ".dmarsh.ac")
+		}
 
         bool bIsJobArrayItem = false;
         if (slJobIDParts.count() > 1) // see if it's a job array item
             bIsJobArrayItem = true;
         // create a new item and add it to the tree heirarchy
         item = addHierarchyItem( heirarchyMap, bShowJobsByQueue, job->m_queue, bIsJobArrayItem,
-            sJobArrayStr, bExpandAll );
+            sJobArrayStr, job->m_username, bExpandAll );
 
 
         item->setText(0,  job->m_jobID);
@@ -341,37 +346,36 @@ void QstatTab::updateList()
  *
 *******************************************************************************/
 QTreeWidgetItem* QstatTab::addHierarchyItem( QMap<QString,QTreeWidgetItem*>& heirarchyMap,
-	bool bShowJobsByQueue, QString queueStr, bool bIsJobArrayItem, QString jobArrayStr, bool bExpandAll )
+	bool bShowJobsByQueue, QString sQueue, bool bIsJobArrayItem, QString sJobArray,
+	QString sUsername, bool bExpandAll )
 {
 	QTreeWidgetItem* newItem = NULL;
 	QTreeWidgetItem* queueParent = NULL;
 
 	if (bShowJobsByQueue)
 	{
-		if (heirarchyMap.contains(queueStr))
+		if (heirarchyMap.contains(sQueue))
 		{
-			queueParent = heirarchyMap.value(queueStr);
-		//	newItem = new QTreeWidgetItem(queueParent);
+			queueParent = heirarchyMap.value(sQueue);
 		}
 		else
 		{
 			queueParent = new QTreeWidgetItem(ui->treeWidget_Jobs);  // ..create it at root level of tree
-			queueParent->setText(0, queueStr);
+			queueParent->setText(0, sQueue);
 			// attach a 0 to the item (indicates it's NOT a jobID)
 			queueParent->setData(0, Qt::UserRole, QVariant::fromValue(0));
 			if (bExpandAll)
 				queueParent->setExpanded(true);
-			heirarchyMap[queueStr] = queueParent;
-		//	newItem = new QTreeWidgetItem(queueParent);
+			heirarchyMap[sQueue] = queueParent;
 		}
 	}
 
 	if (bIsJobArrayItem) // if this is a job array item
 	{
 		QTreeWidgetItem* jobArrayParent = NULL;
-		if (heirarchyMap.contains(jobArrayStr))
+		if (heirarchyMap.contains(sJobArray))
 		{
-			jobArrayParent = heirarchyMap.value(jobArrayStr);
+			jobArrayParent = heirarchyMap.value(sJobArray);
 			newItem = new QTreeWidgetItem(jobArrayParent); // create the new item under the job array parent
 			// attach a 1 to the item (indicates it's a jobID)
 			newItem->setData(0, Qt::UserRole, QVariant::fromValue(1));
@@ -383,12 +387,13 @@ QTreeWidgetItem* QstatTab::addHierarchyItem( QMap<QString,QTreeWidgetItem*>& hei
 			else
 				jobArrayParent = new QTreeWidgetItem(ui->treeWidget_Jobs);  // create it at root level of tree
 
-			jobArrayParent->setText(0, jobArrayStr);
+			jobArrayParent->setText(0, sJobArray);
+			jobArrayParent->setText(1, sUsername);
 			// attach a 0 to the item (indicates it's NOT a jobID)
 			jobArrayParent->setData(0, Qt::UserRole, QVariant::fromValue(0));
 			if (bExpandAll)
 				jobArrayParent->setExpanded(true);
-			heirarchyMap[jobArrayStr] = jobArrayParent;
+			heirarchyMap[sJobArray] = jobArrayParent;
 			newItem = new QTreeWidgetItem(jobArrayParent);  // create the new item under the job array parent
 			// attach 1 to the item (indicates it's a jobID)
 			newItem->setData(0, Qt::UserRole, QVariant::fromValue(1));
@@ -507,9 +512,18 @@ bool QstatTab::issueCmd_Qstat_R()  // init the qstat tab from cmdline "qstat -R"
 	m_qstat_R_Stderr.clear();
 	m_pbsJobs.clear();
 
-	QString qstatCommand = m_mainWindow->m_Config_Cmd_Qstat_R;  // from Ken: do a "qstat -R' as the default display here
+	QString qstatCommand;
+	if (m_mainWindow->m_Config_Call_Qstat_with_T_Flag)  // the "qstat -t" flag is for supporting job arrays
+	{
+		// do a "qstat -R' as the default display here, using the "-t" flag (supports job arrays)
+		qstatCommand = m_mainWindow->m_Config_Cmd_Qstat_R_with_T;
+	}
+	else
+	{
+		// do a "qstat -R' as the default display here, but without the "-t" flag
+		qstatCommand = m_mainWindow->m_Config_Cmd_Qstat_R_without_T;
+	}
 
-//	ui->label_CmdExecuted_Jobs->setText( qstatCommand );
 
 	// show "Wait cursor"
 	QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -843,21 +857,17 @@ bool QstatTab::issueCmd_Qstat_f( QString jobID )
 	m_qstat_f_Stdout.clear();
 	m_qstat_f_Stderr.clear();
 
-//	QString qstat_f_Command = QString("qstat -f %1").arg(jobID);
-//	QString sCmd = m_mainWindow->m_Config_Cmd_Qstat_f;
-//	if (sCmd.endsWith('\"'))  // strip off final double-quote mark - we need to append args after it
-//	{
-//		int len = sCmd.size();
-//		sCmd.remove(len-1, 1);
-//	}
-
-//	QString qstat_f_Command;
-//	if (jobID.isEmpty())
-//		qstat_f_Command = QString ("%1\"").arg(sCmd); // if no jobID given, issues one "qstat -f" call to get all data
-//	else
-//		qstat_f_Command = QString ("%1 %2\"").arg(sCmd).arg(jobID);
-	QString qstat_f_Command = QString (m_mainWindow->m_Config_Cmd_Qstat_f)
-		.arg(jobID);
+	QString qstat_f_Command;
+	if (m_mainWindow->m_Config_Call_Qstat_with_T_Flag)  // the "qstat -t" flag is for supporting job arrays
+	{
+		// do a "qstat -R' as the default display here, using the "-t" flag (supports job arrays)
+		qstat_f_Command = qstat_f_Command = QString (m_mainWindow->m_Config_Cmd_Qstat_f_with_T).arg(jobID);
+	}
+	else
+	{
+		// do a "qstat -R' as the default display here, but without the "-t" flag
+		qstat_f_Command = qstat_f_Command = QString (m_mainWindow->m_Config_Cmd_Qstat_f_without_T).arg(jobID);
+	}
 
 
 	// show "Wait cursor"

@@ -74,8 +74,10 @@ public:
 
 	QString SETTINGS_CMD_Pbsnodes;
 	QString SETTINGS_CMD_Momctl_d3;
-	QString SETTINGS_CMD_Qstat_R;
-	QString SETTINGS_CMD_Qstat_f;
+	QString SETTINGS_CMD_Qstat_R_with_T;	// the "-t" option lets TORQUEView access job arrays
+	QString SETTINGS_CMD_Qstat_R_without_T;
+	QString SETTINGS_CMD_Qstat_f_with_T;	// the "-t" option lets TORQUEView access job arrays
+	QString SETTINGS_CMD_Qstat_f_without_T;
 	QString SETTINGS_CMD_Qmgr_c;
 
 	QString SETTINGS_CMD_StartMOM_HeadNode_Standard;		// StartMOM standard version (for head node)
@@ -142,8 +144,11 @@ public:
 	// Config dlg settings
 	QString m_Config_Cmd_Pbsnodes;
 	QString m_Config_Cmd_Momctl_d3;
-	QString m_Config_Cmd_Qstat_R;
-	QString m_Config_Cmd_Qstat_f;
+	QString m_Config_Cmd_Qstat_R_with_T;
+	QString m_Config_Cmd_Qstat_R_without_T;
+	QString m_Config_Cmd_Qstat_f_with_T;
+	QString m_Config_Cmd_Qstat_f_without_T;
+	bool    m_Config_Call_Qstat_with_T_Flag;
 	QString m_Config_Cmd_Qmgr_c;
 
 	QString m_Config_Cmd_StartMOM_HeadNode_Standard;
@@ -204,7 +209,6 @@ public:
 	DataSourceType m_Config_DataSource;  // 100="Unknown dataSource, 0="Local host", 1="Remote host", 2="Snapshot file"
 	bool m_Config_UsingMultiMoms;
 	bool m_Config_UseServiceToStartStopMOMs;
-//	bool m_Config_ShowSTDERROutput;
 
 
 private slots:
