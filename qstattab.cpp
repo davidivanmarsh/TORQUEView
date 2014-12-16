@@ -35,7 +35,7 @@ QstatTab::QstatTab(QWidget *parent) :
 	ui(new Ui::QstatTab)
 {
 	ui->setupUi(this);
-//	CreateContextMenus();  // at Michael Jackson's request, removing this context menu for now.  It could possibly go back in later...
+	CreateContextMenus();
 
 	m_mainWindow = dynamic_cast<MainWindow*>(parent);
 	if (m_mainWindow == NULL)
